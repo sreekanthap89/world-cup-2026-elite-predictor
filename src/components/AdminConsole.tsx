@@ -49,7 +49,7 @@ export default function AdminConsole({
   onSimulateTamper,
   onResetDatabase
 }: AdminConsoleProps) {
-  const [activeTab, setActiveTab] = useState<'CONTROLS' | 'USERS' | 'LEDGER' | 'SYSTEM_SCHEMAS' | 'SQUADS' | 'POLLS'>('CONTROLS');
+  const [activeTab, setActiveTab] = useState<'CONTROLS' | 'USERS' | 'LEDGER' | 'SYSTEM_SCHEMAS' | 'SQUADS' | 'POLLS' | 'ALL_PREDICTIONS'>('CONTROLS');
   
   // Database instance reference
   const [db] = useState(() => new ClientDBEngine());
@@ -562,6 +562,16 @@ export default function AdminConsole({
           }`}
         >
           <Award className="w-3.5 h-3.5 text-[#3cac3b]" /> Fan Polls control
+        </button>
+        <button
+          onClick={() => { setActiveTab('ALL_PREDICTIONS'); reloadDbState(); }}
+          className={`px-4 py-2.5 font-sans text-xs font-bold uppercase tracking-wider flex items-center gap-2 rounded-t-sm transition-all cursor-pointer ${
+            activeTab === 'ALL_PREDICTIONS'
+              ? 'bg-[#252727] text-white border-b-2 border-[#3cac3b]'
+              : 'text-[#d1d4d1]/40 hover:bg-[#252727]/50'
+          }`}
+        >
+          <Award className="w-3.5 h-3.5 text-[#3cac3b]" /> All Predictions
         </button>
       </nav>
 
@@ -1943,6 +1953,76 @@ export default function AdminConsole({
                   </div>
                 )}
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ALL_PREDICTIONS tab - admin view of all submitted match predictions */}
+      {activeTab === 'ALL_PREDICTIONS' && (
+        <div className="space-y-6 animate-fadeIn">
+          <div className="bg-[#252727] border border-[#d1d4d1]/10 p-5 rounded-sm">
+            <h3 className="font-sans text-xl font-bold uppercase tracking-wider text-white mb-2 flex items-center gap-2">
+              <Award className="w-5 h-5 text-[#3cac3b]" /> Global Prediction Feed
+            </h3>
+            <p className="text-xs text-[#d1d4d1]/70 mb-5">
+              Live feed of all match predictions submitted by analysts. Cross-reference selections and monitor forecasting trends. 
+              Showing {predictionsList.length} total predictions.
+            </p>
+
+            <div className="overflow-x-auto custom-scrollbar">
+              <table className="w-full text-left font-mono text-[10px]">
+                <thead>
+                  <tr className="border-b border-[#d1d4d1]/10 text-[#d1d4d1]/40 uppercase tracking-wider font-bold">
+                    <th className="py-3 px-3">Date / Round</th>
+                    <th className="py-3 px-3">Analyst</th>
+                    <th className="py-3 px-3">Match</th>
+                    <th className="py-3 px-3 text-center">Prediction</th>
+                    <th className="py-3 px-3 text-right">Score Forecast</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#d1d4d1]/10 text-white/90">
+                  {predictionsList.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="py-8 text-center text-zinc-500">
+                        No predictions have been submitted by any users yet.
+                      </td>
+                    </tr>
+                  ) : (
+                    [...predictionsList].sort((a,b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()).map(pred => {
+                      const user = profiles.find(p => p.id === pred.user_id);
+                      const match = matches.find(m => m.id === pred.match_id);
+                      if (!match) return null;
+                      
+                      return (
+                        <tr key={pred.id} className="hover:bg-white/5 transition-colors">
+                          <td className="py-3 px-3">
+                            <span className="block text-[#3cac3b] font-bold">{match.round}</span>
+                            <span className="text-white/50">{new Date(match.start_time).toLocaleDateString()}</span>
+                          </td>
+                          <td className="py-3 px-3">
+                            <span className="block font-bold text-white text-sm">{user?.fullName || 'Unknown User'}</span>
+                            <span className="text-white/40">{user?.email || 'N/A'}</span>
+                          </td>
+                          <td className="py-3 px-3">
+                            <span className="font-bold text-white uppercase">{match.team_a_name}</span>
+                            <span className="text-white/40 mx-2">vs</span>
+                            <span className="font-bold text-white uppercase">{match.team_b_name}</span>
+                          </td>
+                          <td className="py-3 px-3 text-center">
+                            <span className="bg-black/60 text-[#3cac3b] border border-[#3cac3b]/25 rounded-sm py-1 px-2 font-bold">
+                              {pred.selection}
+                            </span>
+                          </td>
+                          <td className="py-3 px-3 text-right text-base text-white/80">
+                            {pred.team_a_pred_score} : {pred.team_b_pred_score}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

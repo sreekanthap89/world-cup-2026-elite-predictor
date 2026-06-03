@@ -14,6 +14,7 @@ import AdminConsole from './components/AdminConsole';
 import MatchDetailModal from './components/MatchDetailModal';
 import BackgroundVideo from './components/BackgroundVideo';
 import PollsHubView from './components/PollsHubView';
+import MyPredictionsView from './components/MyPredictionsView';
 
 // @ts-expect-error - image asset loaded by Vite
 import stadiumBg from './assets/images/stadium_background_1780500343243.png';
@@ -28,7 +29,7 @@ export default function App() {
   const [squads, setSquads] = useState<Record<string, Player[]>>({});
   const [teamStats, setTeamStats] = useState<Record<string, TeamStats>>({});
   const [isTampered, setIsTampered] = useState<boolean>(false);
-  const [activeScreen, setActiveScreen] = useState<'BRACKET' | 'LEADERBOARD' | 'ADMIN_CONSOLE' | 'POLLS'>('BRACKET');
+  const [activeScreen, setActiveScreen] = useState<'BRACKET' | 'LEADERBOARD' | 'ADMIN_CONSOLE' | 'POLLS' | 'MY_PREDICTIONS'>('BRACKET');
   
   // Custom polls states
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -200,6 +201,16 @@ export default function App() {
             </button>
 
             <button
+              onClick={() => setActiveScreen('MY_PREDICTIONS')}
+              id="nav-to-my-predictions"
+              className={`pb-1 transition-colors relative font-sans ${
+                activeScreen === 'MY_PREDICTIONS' ? 'text-[#e61d25] border-b-2 border-[#e61d25]' : 'text-[#d1d4d1]/60 hover:text-white'
+              }`}
+            >
+              My Predictions
+            </button>
+
+            <button
               onClick={() => setActiveScreen('POLLS')}
               id="nav-to-polls"
               className={`pb-1 transition-colors relative font-sans ${
@@ -308,6 +319,16 @@ export default function App() {
               }
               return res;
             }}
+          />
+        )}
+
+        {/* VIEW 5: MY PREDICTIONS */}
+        {activeScreen === 'MY_PREDICTIONS' && (
+          <MyPredictionsView
+            matches={matches}
+            predictions={predictions}
+            currentUserId={profile.id}
+            onMatchClick={(m) => setSelectedMatch(m)}
           />
         )}
 

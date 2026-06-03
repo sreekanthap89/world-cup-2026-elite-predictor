@@ -432,52 +432,6 @@ export default function BackgroundVideo({ opacity = 0.50, brightness = 0.40, isL
           style={{ animation: 'radar-pulse 6s infinite linear 2s' }}
         />
       </div>
-
-      {/* LAYER 3: MEDIA PLAYBACK CONTROLLER */}
-      <div className="absolute inset-0 w-full h-full flex items-center justify-center">
-        {useBackupYoutube ? (
-          /* Robust iframe fallback with standard YouTube player configuration */
-          <div className="absolute top-1/2 left-1/2 w-[125vw] h-[125vh] aspect-video -translate-x-1/2 -translate-y-1/2 scale-[1.7] min-w-[177.77vh] min-h-[56.25vw] flex items-center justify-center">
-            <iframe
-              className="w-full h-full object-cover pointer-events-none brightness-[0.35] contrast-[1.10] saturate-[0.80]"
-              src={`https://www.youtube.com/embed/${backupYoutubeId}?autoplay=1&mute=1&muted=1&loop=1&playlist=${backupYoutubeId}&controls=0&playsinline=1&rel=0&showinfo=0&modestbranding=1&enablejsapi=1`}
-              title="FIFA World Cup Stadium Visualizer Loop"
-              allow="autoplay; encrypted-media; gyroscope; picture-in-picture"
-              referrerPolicy="no-referrer"
-              frameBorder="0"
-            />
-          </div>
-        ) : (
-          /* Universal HTML5 Video tag with strict local CORS overrides and immediate safety error listener */
-          <video
-            ref={videoRef}
-            autoPlay
-            muted
-            loop
-            playsInline
-            onError={handleVideoError}
-            poster={stadiumBg}
-            referrerPolicy="no-referrer"
-            crossOrigin="anonymous"
-            className="w-full h-full object-cover"
-            style={{
-              opacity: opacity,
-              filter: `brightness(${brightness}) contrast(1.15) saturate(0.85)`,
-            }}
-          >
-            {/* Native loop of live football match stadium lights. We ommit referrers using no-referrer attributes */}
-            <source 
-              src="https://assets.mixkit.co/videos/preview/mixkit-bright-lights-illuminating-a-stadium-at-night-42173-large.mp4" 
-              type="video/mp4" 
-            />
-            {/* Tertiary sports match background loop backup */}
-            <source 
-              src="https://assets.mixkit.co/videos/preview/mixkit-stadium-lights-and-crowd-in-a-sports-match-34304-large.mp4" 
-              type="video/mp4" 
-            />
-          </video>
-        )}
-      </div>
     </div>
   );
 }

@@ -272,6 +272,7 @@ function recomputeLeaderboardOnServer() {
 
 // Initialize on server run
 loadDatabase();
+recomputeLeaderboardOnServer();
 
 // --- API IMPLEMENTATIONS ---
 
