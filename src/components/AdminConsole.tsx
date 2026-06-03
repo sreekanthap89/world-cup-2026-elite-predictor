@@ -126,11 +126,12 @@ export default function AdminConsole({
   const [copied, setCopied] = useState(false);
 
   // Sync profiles and predictions from local database on state change
-  const reloadDbState = () => {
-    setProfiles(db.getProfiles());
-    setPredictionsList(db.getPredictions());
-    setPolls(db.getPolls());
-    setVotes(db.getVotes());
+  const reloadDbState = async () => {
+    await db.initializeAndVerify();
+    setProfiles([...db.getProfiles()]);
+    setPredictionsList([...db.getPredictions()]);
+    setPolls([...db.getPolls()]);
+    setVotes([...db.getVotes()]);
   };
 
   useEffect(() => {
