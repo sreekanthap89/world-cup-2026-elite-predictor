@@ -341,8 +341,9 @@ export default function BracketView({
   };
 
   return (
-    <div className="w-full flex flex-col bg-[#131414]/90 backdrop-blur-md border border-[#d1d4d1]/10 rounded-sm overflow-hidden min-h-[700px] shadow-2xl">
-      {/* Dynamic Navigation tabs */}
+    <div className="w-full flex flex-col bg-transparent border border-[#d1d4d1]/10 rounded-sm overflow-hidden min-h-[700px] shadow-2xl">
+      {/* Dynamic Navigation tabs - Commented out to only show the tree view */}
+      {/* 
       <div className="flex bg-[#1c1d1d]/90 border-b border-[#d1d4d1]/10 px-4 py-3 gap-2 shrink-0 overflow-x-auto custom-scrollbar">
         <button
           onClick={() => setActiveTab('GROUPS')}
@@ -385,6 +386,7 @@ export default function BracketView({
           🏆 Full Tournament Tree
         </button>
       </div>
+      */}
 
       {activeTab === 'GROUPS' && (
         <div className="p-6 overflow-y-auto h-[600px] custom-scrollbar bg-[#131414]">
@@ -467,7 +469,7 @@ export default function BracketView({
       )}
 
       {activeTab === 'KOs' && (
-        <div className="w-full relative select-none font-sans bg-[#0d0f0e] border border-white/5 overflow-hidden h-[820px] shrink-0 rounded-sm shadow-inner">
+        <div className="w-full relative select-none font-sans bg-transparent border border-white/5 overflow-hidden h-[820px] shrink-0 rounded-sm shadow-inner">
           
           {/* Controls overlay */}
           <div className="absolute top-4 left-4 z-10 flex flex-wrap gap-2">
@@ -531,8 +533,8 @@ export default function BracketView({
                 transform: `translate(${panOffset.x}px, ${panOffset.y}px) scale(${zoomScale})`,
                 width: '2680px',
                 height: '840px',
-                backgroundColor: '#1b4d22',
-                backgroundImage: 'repeating-linear-gradient(90deg, #1b4d22, #1b4d22 100px, #143e1a 100px, #143e1a 200px)'
+                backgroundColor: 'rgba(27, 77, 34, 0.4)',
+                backgroundImage: 'repeating-linear-gradient(90deg, rgba(27, 77, 34, 0.4), rgba(27, 77, 34, 0.4) 100px, rgba(20, 62, 26, 0.4) 100px, rgba(20, 62, 26, 0.4) 200px)'
               }}
             >
               

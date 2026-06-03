@@ -22,7 +22,14 @@ import stadiumBg from './assets/images/stadium_background_1780500343243.png';
 import { Trophy, ShieldAlert, Award, LogOut, Terminal, Users, Database, Globe } from 'lucide-react';
 
 export default function App() {
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(() => {
+    try {
+      const stored = sessionStorage.getItem('FWC2026_PREDICTOR_PROFILE');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
   const [matches, setMatches] = useState<Match[]>([]);
   const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [ledger, setLedger] = useState<LedgerBlock[]>([]);
@@ -135,7 +142,7 @@ export default function App() {
     <div 
       className="min-h-screen text-[#d1d4d1] font-sans flex flex-col relative pb-16 bg-[#08090a]"
       style={{
-        backgroundImage: `linear-gradient(to bottom, rgba(8, 9, 10, 0.90), rgba(8, 9, 10, 0.97)), url(${stadiumBg})`,
+        backgroundImage: `linear-gradient(to bottom, rgba(8, 9, 10, 0.2), rgba(8, 9, 10, 0.3)), url(${stadiumBg})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed',
@@ -143,7 +150,10 @@ export default function App() {
     >
       
       {/* 📺 RESILIENT FULL-SCREEN AMBIENT STADIUM FOOTBALL VIDEO LOOP & LIGHT SHOW */}
-      <BackgroundVideo opacity={0.35} brightness={0.30} />
+      <BackgroundVideo opacity={0.85} brightness={0.85} />
+      
+      {/* Pitch tactical grid background design line markings */}
+      <div className="absolute inset-0 opacity-[0.08] select-none pointer-events-none z-0 bg-[radial-gradient(#3cac3b_1.2px,transparent_1.2px)] [background-size:28px_28px]"></div>
       
       {/* ⚠️ SYSTEM RESYNC NOTIFICATION BAR */}
       {isTampered && profile.role === 'ADMIN' && (

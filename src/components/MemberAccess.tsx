@@ -19,7 +19,7 @@ interface MemberAccessProps {
 
 export default function MemberAccess({ onSuccess, initialEmail = 'sreekanthap90@gmail.com' }: MemberAccessProps) {
   const [accessMode, setAccessMode] = useState<'ANALYST_LOGIN' | 'ADMIN_GATE'>('ANALYST_LOGIN');
-  
+
   // Input fields
   const [email, setEmail] = useState(() => {
     try {
@@ -32,7 +32,7 @@ export default function MemberAccess({ onSuccess, initialEmail = 'sreekanthap90@
   const [fullName, setFullName] = useState('');
   const [employeeId, setEmployeeId] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  
+
   // Security Reset Flow States
   const [recoveryStep, setRecoveryStep] = useState<'OFF' | 'EMAIL_INPUT' | 'RESET_PASSCODE'>('OFF');
   const [recoveryEmail, setRecoveryEmail] = useState('');
@@ -137,7 +137,7 @@ export default function MemberAccess({ onSuccess, initialEmail = 'sreekanthap90@
           accuracy: 94,
           points: 8420
         };
-        
+
         db.registerNewUser(defaultAdmin);
         setSuccessNotice('System administrator credentials authenticated successfully.');
         setTimeout(() => {
@@ -179,7 +179,7 @@ export default function MemberAccess({ onSuccess, initialEmail = 'sreekanthap90@
 
     db.resetUserPassword(recoveryEmail, newPassword);
     setRecoverySuccessMsg('Secured Access Key updated successfully! Returning to standard access panel.');
-    
+
     setTimeout(() => {
       setRecoveryStep('OFF');
       setAccessMode('ANALYST_LOGIN');
@@ -188,41 +188,26 @@ export default function MemberAccess({ onSuccess, initialEmail = 'sreekanthap90@
   };
 
   return (
-    <div 
-      className="flex min-h-screen w-full flex-col md:flex-row bg-[#08090a] text-[#d1d4d1] overflow-hidden font-sans relative"
+    <div
+      className="flex h-screen w-full flex-col md:flex-row bg-[#08090a] text-[#d1d4d1] overflow-hidden font-sans relative"
       style={{
-        backgroundImage: `linear-gradient(to bottom, rgba(8, 9, 10, 0.75), rgba(8, 9, 10, 0.90)), url(${stadiumBg})`,
+        backgroundImage: `linear-gradient(to bottom, rgba(8, 9, 10, 0.2), rgba(8, 9, 10, 0.4)), url(${stadiumBg})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
     >
-      
+
       {/* 📺 RESILIENT FULL-SCREEN AMBIENT STADIUM FOOTBALL VIDEO LOOP, BRAND ARCHES & LIGHT SHOW */}
-      <BackgroundVideo opacity={0.55} brightness={0.45} isLogin={true} />
+      <BackgroundVideo opacity={0.85} brightness={0.85} isLogin={true} />
 
       {/* LEFT COLUMN: HERO VISUAL INSIGNIA */}
-      <section className="relative z-10 w-full md:w-3/5 min-h-[45vh] md:h-full flex flex-col items-center justify-center p-6 md:p-16 overflow-hidden border-b md:border-b-0 md:border-r border-white/5">
-        
-        {/* Pitch tactical grid background design line markings */}
-        <div className="absolute inset-0 opacity-[0.15] select-none pointer-events-none z-0 bg-[radial-gradient(#3cac3b_1.2px,transparent_1.2px)] [background-size:28px_28px]"></div>
-        
-        {/* Tactical drifting football radar orb light effect */}
-        <motion.div 
-          animate={{
-            x: ['-25%', '115%'],
-            y: ['15%', '85%', '15%'],
-            scale: [1, 1.20, 1],
-          }}
-          transition={{
-            duration: 18,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-          className="absolute w-80 h-80 rounded-full bg-emerald-500/10 blur-[100px] pointer-events-none z-0"
-        />
-        
-        <div className="relative z-10 w-full max-w-2xl flex flex-col items-center md:items-start text-center md:text-left gap-4">
-          <motion.div 
+      <section className="relative z-10 w-full md:w-3/5 h-full flex flex-col items-center justify-center p-6 md:p-16 overflow-hidden">
+
+        {/* Pitch tactical grid background design line markings - expanded to full area */}
+        <div className="absolute inset-0 opacity-[0.08] select-none pointer-events-none z-0 bg-[radial-gradient(#3cac3b_1.2px,transparent_1.2px)] [background-size:28px_28px]"></div>
+
+        <div className="relative z-10 w-full max-w-2xl flex flex-col items-center md:items-start text-center md:text-left gap-5">
+          <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65, type: "spring" }}
@@ -251,25 +236,22 @@ export default function MemberAccess({ onSuccess, initialEmail = 'sreekanthap90@
           </div>
 
           {/* 🏆 BEAUTIFUL concentric FIFA 2026 BRAND IDENTITY BADGE MATCHING THE USER-UPLOADED IMAGE */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.15 }}
-            className="relative flex items-center justify-center w-full max-w-sm aspect-video bg-gradient-to-br from-white/[0.04] to-transparent border border-white/10 rounded-xl p-5 overflow-hidden my-3 shadow-2xl group"
+          <div
+            className="relative flex items-center justify-center w-full max-w-sm aspect-video bg-gradient-to-br from-white/[0.04] to-transparent border border-white/10 rounded-xl p-5 overflow-hidden my-2 shadow-2xl group"
           >
             {/* Swirling rainbow brand bands rotating in opposite directions (inspired by the curved waves in user image) */}
             <div className="absolute inset-0 w-full h-full flex items-center justify-center pointer-events-none opacity-60 group-hover:opacity-85 transition-opacity duration-500">
-              <div 
-                className="absolute w-44 h-44 rounded-full border-[10px] border-t-red-600 border-r-orange-500 border-b-yellow-400 border-l-lime-400/80" 
-                style={{ animation: 'fwc-spin-slow 14s infinite linear' }} 
+              <div
+                className="absolute w-44 h-44 rounded-full border-[10px] border-t-red-600 border-r-orange-500 border-b-yellow-400 border-l-lime-400/80"
+                style={{ animation: 'fwc-spin-slow 14s infinite linear' }}
               />
-              <div 
-                className="absolute w-[82%] h-[82%] rounded-full border-[12px] border-t-purple-600 border-r-blue-500 border-b-cyan-500 border-l-emerald-500/80" 
-                style={{ animation: 'fwc-spin-reverse 18s infinite linear' }} 
+              <div
+                className="absolute w-[82%] h-[82%] rounded-full border-[12px] border-t-purple-600 border-r-blue-500 border-b-cyan-500 border-l-emerald-500/80"
+                style={{ animation: 'fwc-spin-reverse 18s infinite linear' }}
               />
-              <div 
-                className="absolute w-[64%] h-[64%] rounded-full border-[8px] border-t-orange-500 border-r-rose-600 border-b-indigo-500 border-l-teal-400/80" 
-                style={{ animation: 'fwc-spin-slow 22s infinite linear' }} 
+              <div
+                className="absolute w-[64%] h-[64%] rounded-full border-[8px] border-t-orange-500 border-r-rose-600 border-b-indigo-500 border-l-teal-400/80"
+                style={{ animation: 'fwc-spin-slow 22s infinite linear' }}
               />
             </div>
 
@@ -288,48 +270,43 @@ export default function MemberAccess({ onSuccess, initialEmail = 'sreekanthap90@
                 FIFA
               </div>
             </div>
-          </motion.div>
+          </div>
 
-          {/* Interactive tactical numbers display with framer motion animations */}
-          <motion.div 
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.25 }}
-            className="flex gap-4 bg-black/45 backdrop-blur-md p-3 px-5 rounded-sm border border-white/10 w-full max-w-md shadow-2xl relative overflow-hidden group hover:border-[#3cac3b]/35 transition-all duration-300"
-          >
+          {/* Interactive tactical numbers display */}
+          <div className="flex gap-4 bg-black/45 backdrop-blur-md p-3 px-5 rounded-sm border border-white/10 w-full max-w-md shadow-2xl relative overflow-hidden group hover:border-[#3cac3b]/35 transition-all duration-300">
             <div className="absolute top-0 left-0 w-1 h-full bg-[#3cac3b] group-hover:bg-emerald-400 transition-colors" />
-            
+
             <div className="flex-1 text-center">
               <span className="font-mono text-lg md:text-xl text-[#3cac3b] font-black block">48</span>
               <span className="font-sans text-[8px] text-[#d1d4d1]/50 tracking-wider font-bold uppercase block mt-1">NATIONS FIGHT</span>
             </div>
             <div className="w-[1px] bg-white/10 self-stretch"></div>
-            
+
             <div className="flex-1 text-center">
               <span className="font-mono text-lg md:text-xl text-blue-400 font-black block">104</span>
               <span className="font-sans text-[8px] text-[#d1d4d1]/50 tracking-wider font-bold uppercase block mt-1">TOTAL BATTLES</span>
             </div>
             <div className="w-[1px] bg-white/10 self-stretch"></div>
-            
+
             <div className="flex-1 text-center">
               <span className="font-mono text-lg md:text-xl text-rose-500 font-black block">1</span>
               <span className="font-sans text-[8px] text-[#d1d4d1]/50 tracking-wider font-bold uppercase block mt-1">CHAMPION TIER</span>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* RIGHT COLUMN: AUTHENTICATION DECK (GLASS CONTAINER) */}
-      <section className="relative z-10 w-full md:w-2/5 min-h-[55vh] md:h-full flex flex-col justify-center items-center p-4 md:p-10 overflow-y-auto custom-scrollbar border-t md:border-t-0 md:border-l border-white/5 bg-[#030404]/40">
+      <section className="relative z-10 w-full md:w-2/5 h-full flex flex-col justify-center items-center p-4 md:p-10 overflow-y-auto custom-scrollbar border-t md:border-t-0 md:border-l border-white/5">
         <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-[#3cac3b]/5 rounded-full blur-[120px] pointer-events-none select-none z-0"></div>
-        
+
         {/* Floating High-End Glassmorphic Card */}
         <div className="relative z-10 w-full max-w-sm bg-neutral-950/75 border border-white/10 p-5 md:p-7 rounded-2xl backdrop-blur-3xl shadow-3xl space-y-5 my-auto flex flex-col justify-between">
           <div className="space-y-4">
             {/* Core Screen Router */}
             {recoveryStep !== 'OFF' ? (
               /* ================= PASSWORD RECOVERY WIZARD PANE ================= */
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 className="w-full space-y-4"
@@ -341,7 +318,7 @@ export default function MemberAccess({ onSuccess, initialEmail = 'sreekanthap90@
                 >
                   <ArrowLeft className="w-3.5 h-3.5" /> Return To Gate
                 </button>
-                
+
                 <div className="space-y-1">
                   <span className="font-mono text-[9px] text-[#3cac3b] uppercase tracking-widest block font-bold">RECOVERY SYSTEM</span>
                   <h2 className="font-sans font-black text-xl uppercase text-white tracking-tight leading-none">
@@ -436,33 +413,31 @@ export default function MemberAccess({ onSuccess, initialEmail = 'sreekanthap90@
               </motion.div>
             ) : (
               /* ================= MAIN AUTHENTICATION CARD SYSTEM ================= */
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 className="w-full space-y-4"
               >
-                
+
                 {/* SEPARATE LOGIN GATE MODE NAV HEADER CARD */}
                 <div className="flex bg-black/50 border border-white/10 p-1 rounded-lg gap-1">
                   <button
                     type="button"
                     onClick={() => { setAccessMode('ANALYST_LOGIN'); setErrorMsg(''); setSuccessNotice(''); }}
-                    className={`flex-1 py-1.5 text-center font-sans font-black text-[10.5px] uppercase tracking-wider rounded-md transition-all cursor-pointer ${
-                      accessMode === 'ANALYST_LOGIN' 
-                        ? 'bg-[#3cac3b] text-white shadow-md shadow-[#3cac3b]/20 animate-pulse' 
-                        : 'text-[#d1d4d1]/50 hover:text-white'
-                    }`}
+                    className={`flex-1 py-1.5 text-center font-sans font-black text-[10.5px] uppercase tracking-wider rounded-md transition-all cursor-pointer ${accessMode === 'ANALYST_LOGIN'
+                      ? 'bg-[#3cac3b] text-white shadow-md shadow-[#3cac3b]/20 animate-pulse'
+                      : 'text-[#d1d4d1]/50 hover:text-white'
+                      }`}
                   >
                     ⚽ Analyst Gate
                   </button>
                   <button
                     type="button"
                     onClick={() => { setAccessMode('ADMIN_GATE'); setErrorMsg(''); setSuccessNotice(''); }}
-                    className={`flex-1 py-1.5 text-center font-sans font-black text-[10.5px] uppercase tracking-wider rounded-md transition-all cursor-pointer ${
-                      accessMode === 'ADMIN_GATE' 
-                        ? 'bg-amber-505 bg-amber-500 text-black shadow-md shadow-amber-500/20' 
-                        : 'text-[#d1d4d1]/50 hover:text-white'
-                    }`}
+                    className={`flex-1 py-1.5 text-center font-sans font-black text-[10.5px] uppercase tracking-wider rounded-md transition-all cursor-pointer ${accessMode === 'ADMIN_GATE'
+                      ? 'bg-amber-505 bg-amber-500 text-black shadow-md shadow-amber-500/20'
+                      : 'text-[#d1d4d1]/50 hover:text-white'
+                      }`}
                   >
                     👑 VIP Overseer
                   </button>
@@ -473,8 +448,8 @@ export default function MemberAccess({ onSuccess, initialEmail = 'sreekanthap90@
                     {accessMode === 'ADMIN_GATE' ? 'Admin Portal VIP' : 'Analyst Access'}
                   </h2>
                   <p className="text-[11px] text-[#d1d4d1]/65 leading-relaxed">
-                    {accessMode === 'ADMIN_GATE' 
-                      ? 'Exclusive system management block. Please provide administrative code key.' 
+                    {accessMode === 'ADMIN_GATE'
+                      ? 'Exclusive system management block. Please provide administrative code key.'
                       : 'Provide your credentials below to synchronize prediction brackets, metrics, and models.'}
                   </p>
                 </div>
@@ -493,7 +468,7 @@ export default function MemberAccess({ onSuccess, initialEmail = 'sreekanthap90@
 
                 {/* 🔑 SLEEK COMPACT VIP DEMO ACCORDION DRAWER PANEL */}
                 <div className="border border-white/10 rounded-lg overflow-hidden bg-white/[0.02]">
-                  <button 
+                  <button
                     type="button"
                     onClick={() => setShowDemoAccounts(!showDemoAccounts)}
                     className="w-full px-3 py-2 flex items-center justify-between text-left text-[10px] font-black text-white hover:bg-white/[0.05] transition-colors"
@@ -505,18 +480,18 @@ export default function MemberAccess({ onSuccess, initialEmail = 'sreekanthap90@
                       {showDemoAccounts ? 'CLOSE ▲' : 'OPEN ▼'}
                     </span>
                   </button>
-                  
+
                   {showDemoAccounts && (
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       className="p-3 text-[10.5px] space-y-2 bg-black/50 border-t border-white/5 divide-y divide-white/5"
                     >
                       <div className="flex items-center justify-between pb-1 gap-2">
                         <span className="text-white/40 font-mono text-[9px]">👤 Analyst:</span>
-                        <button 
+                        <button
                           type="button"
-                          className="text-[#3cac3b] font-bold hover:underline cursor-pointer" 
+                          className="text-[#3cac3b] font-bold hover:underline cursor-pointer"
                           onClick={() => { setEmail('marco.rossi@fifa.com'); setAccessKey(''); setAccessMode('ANALYST_LOGIN'); }}
                         >
                           marco.rossi@fifa.com
@@ -524,9 +499,9 @@ export default function MemberAccess({ onSuccess, initialEmail = 'sreekanthap90@
                       </div>
                       <div className="flex items-center justify-between py-1.5 gap-2">
                         <span className="text-white/40 font-mono text-[9px]">👤 Predictive:</span>
-                        <button 
+                        <button
                           type="button"
-                          className="text-[#3cac3b] font-bold hover:underline cursor-pointer" 
+                          className="text-[#3cac3b] font-bold hover:underline cursor-pointer"
                           onClick={() => { setEmail('sarah.j@predictor-net.org'); setAccessKey(''); setAccessMode('ANALYST_LOGIN'); }}
                         >
                           sarah.j@predictor-net.org
@@ -534,9 +509,9 @@ export default function MemberAccess({ onSuccess, initialEmail = 'sreekanthap90@
                       </div>
                       <div className="flex items-center justify-between py-1.5 gap-2">
                         <span className="text-white/40 font-mono text-[9px]">👑 Admin:</span>
-                        <button 
+                        <button
                           type="button"
-                          className="text-amber-400 font-bold hover:underline cursor-pointer" 
+                          className="text-amber-400 font-bold hover:underline cursor-pointer"
                           onClick={() => { setEmail('sreekanthap90@gmail.com'); setAccessKey('ADMIN2026'); setAccessMode('ADMIN_GATE'); }}
                         >
                           sreekanthap90@gmail.com
@@ -626,14 +601,13 @@ export default function MemberAccess({ onSuccess, initialEmail = 'sreekanthap90@
 
                   <button
                     type="submit"
-                    className={`w-full py-3 text-xs font-black font-sans uppercase tracking-widest transition-all mt-2 flex items-center justify-center gap-2 cursor-pointer rounded-md ${
-                      accessMode === 'ADMIN_GATE' 
-                        ? 'bg-amber-500 text-black hover:bg-amber-400 font-extrabold shadow-lg shadow-amber-500/10' 
-                        : 'bg-[#3cac3b] hover:bg-[#3cac3b]/95 text-white font-extrabold shadow-lg shadow-[#3cac3b]/10'
-                    }`}
+                    className={`w-full py-3 text-xs font-black font-sans uppercase tracking-widest transition-all mt-2 flex items-center justify-center gap-2 cursor-pointer rounded-md ${accessMode === 'ADMIN_GATE'
+                      ? 'bg-amber-500 text-black hover:bg-amber-400 font-extrabold shadow-lg shadow-amber-500/10'
+                      : 'bg-[#3cac3b] hover:bg-[#3cac3b]/95 text-white font-extrabold shadow-lg shadow-[#3cac3b]/10'
+                      }`}
                   >
-                    {accessMode === 'ADMIN_GATE' 
-                      ? 'Authorize VIP Clearance' 
+                    {accessMode === 'ADMIN_GATE'
+                      ? 'Authorize VIP Clearance'
                       : 'Verify Practitioner Token'}
                   </button>
                 </form>
@@ -650,7 +624,7 @@ export default function MemberAccess({ onSuccess, initialEmail = 'sreekanthap90@
               </span>
               <span>12ms TLS Response</span>
             </div>
-            
+
             <div className="flex items-center justify-between gap-2 pt-1 border-t border-white/[0.04]">
               <span className="text-[8.5px] font-mono text-white/30 uppercase">FWC.NODE.2026 ALPHA</span>
               <div className="flex items-center gap-1.5 text-white/30">
