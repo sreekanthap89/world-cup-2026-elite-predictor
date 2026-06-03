@@ -75,3 +75,26 @@ export interface TeamStats {
   momentum: number[]; // Trend for past 5 matches e.g. [10, 20, 15, 45, 5]
   flagUrl?: string; // Optional custom flag image URL overriding ISO codes
 }
+
+export interface PollOption {
+  id: string;
+  text: string;
+}
+
+export interface Poll {
+  id: string;
+  question: string;
+  options: PollOption[];
+  correctOptionId?: string | null;
+  status: 'OPEN' | 'RESOLVED';
+  pointsReward: number;
+}
+
+export interface PollVote {
+  id: string;
+  user_id: string;
+  poll_id: string;
+  option_id: string;
+  created_at: string;
+}
+

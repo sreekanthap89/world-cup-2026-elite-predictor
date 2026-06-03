@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Profile, Match, Prediction, LedgerBlock, Player, TeamStats } from './types';
+import { Profile, Match, Prediction, LedgerBlock, Player, TeamStats, Poll, PollVote } from './types';
 import { ClientDBEngine } from './utils/dbEngine';
 
 import MemberAccess from './components/MemberAccess';
@@ -12,6 +12,8 @@ import BracketView from './components/BracketView';
 import LeaderboardView from './components/LeaderboardView';
 import AdminConsole from './components/AdminConsole';
 import MatchDetailModal from './components/MatchDetailModal';
+import BackgroundVideo from './components/BackgroundVideo';
+import PollsHubView from './components/PollsHubView';
 
 // @ts-expect-error - image asset loaded by Vite
 import stadiumBg from './assets/images/stadium_background_1780500343243.png';
@@ -26,8 +28,13 @@ export default function App() {
   const [squads, setSquads] = useState<Record<string, Player[]>>({});
   const [teamStats, setTeamStats] = useState<Record<string, TeamStats>>({});
   const [isTampered, setIsTampered] = useState<boolean>(false);
-  const [activeScreen, setActiveScreen] = useState<'BRACKET' | 'LEADERBOARD' | 'ADMIN_CONSOLE'>('BRACKET');
+  const [activeScreen, setActiveScreen] = useState<'BRACKET' | 'LEADERBOARD' | 'ADMIN_CONSOLE' | 'POLLS'>('BRACKET');
   
+  // Custom polls states
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [polls, setPolls] = useState<Poll[]>([]);
+  const [votes, setVotes] = useState<PollVote[]>([]);
+
   // Selected match for prediction popup modal
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
 
@@ -46,6 +53,9 @@ export default function App() {
       setLedger(engine.getLedger());
       setSquads(engine.getSquads());
       setTeamStats(engine.getTeamStats());
+      setProfiles(engine.getProfiles());
+      setPolls(engine.getPolls());
+      setVotes(engine.getVotes());
       setIsTampered(engine.checkIsTampered());
 
       // Pre-load existing session details if remembered
@@ -64,6 +74,9 @@ export default function App() {
     setLedger([...dbRef.current.getLedger()]);
     setSquads({ ...dbRef.current.getSquads() });
     setTeamStats({ ...dbRef.current.getTeamStats() });
+    setProfiles([...dbRef.current.getProfiles()]);
+    setPolls([...dbRef.current.getPolls()]);
+    setVotes([...dbRef.current.getVotes()]);
     setIsTampered(dbRef.current.checkIsTampered());
   };
 
@@ -133,25 +146,8 @@ export default function App() {
       }}
     >
       
-      {/* 📺 STUNNING STADIUM MATCH ENGINE INNER BACKGROUND LOOP (HmpzUm5j4OE) */}
-      <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
-        {/* Multilayered filter gradients for excellent content contrast and readability */}
-        <div className="absolute inset-0 bg-[#070809]/93 md:bg-[#060708]/88 z-10" />
-        <div className="absolute inset-0 bg-radial-at-c from-transparent via-[#08090a]/80 to-[#030404]/98 z-15 mix-blend-multiply" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#08090a]/40 via-transparent to-[#030404]/90 z-15" />
-        
-        {/* Scale the iframe up to cleanly hide all native borders and controls */}
-        <div className="absolute top-1/2 left-1/2 w-[125vw] h-[125vh] aspect-video -translate-x-1/2 -translate-y-1/2 scale-[1.7] min-w-[177.77vh] min-h-[56.25vw] flex items-center justify-center">
-          <iframe
-            className="w-full h-full object-cover pointer-events-none brightness-[0.40] contrast-[1.1] saturate-[0.85]"
-            src="https://www.youtube-nocookie.com/embed/HmpzUm5j4OE?autoplay=1&mute=1&loop=1&playlist=HmpzUm5j4OE&controls=0&playsinline=1&rel=0&showinfo=0&modestbranding=1"
-            title="FIFA World Cup Inner Background Loop"
-            allow="autoplay; encrypted-media; gyroscope; picture-in-picture"
-            referrerPolicy="no-referrer"
-            frameBorder="0"
-          />
-        </div>
-      </div>
+      {/* 📺 RESILIENT FULL-SCREEN AMBIENT STADIUM FOOTBALL VIDEO LOOP & LIGHT SHOW */}
+      <BackgroundVideo opacity={0.35} brightness={0.30} />
       
       {/* ⚠️ SYSTEM RESYNC NOTIFICATION BAR */}
       {isTampered && profile.role === 'ADMIN' && (
@@ -206,6 +202,16 @@ export default function App() {
               }`}
             >
               Leaderboard
+            </button>
+
+            <button
+              onClick={() => setActiveScreen('POLLS')}
+              id="nav-to-polls"
+              className={`pb-1 transition-colors relative font-sans ${
+                activeScreen === 'POLLS' ? 'text-[#e61d25] border-b-2 border-[#e61d25]' : 'text-[#d1d4d1]/60 hover:text-white'
+              }`}
+            >
+              Fan Polls
             </button>
 
             {profile.role === 'ADMIN' && (
@@ -291,7 +297,24 @@ export default function App() {
         )}
 
         {/* VIEW 2: GLOBAL LEADERBOARD */}
-        {activeScreen === 'LEADERBOARD' && <LeaderboardView />}
+        {activeScreen === 'LEADERBOARD' && <LeaderboardView profiles={profiles} />}
+
+        {/* VIEW 4: FAN POLL HUB */}
+        {activeScreen === 'POLLS' && (
+          <PollsHubView
+            profile={profile}
+            polls={polls}
+            votes={votes}
+            onSubmitVote={async (pollId, optionId) => {
+              if (!dbRef.current) return { success: false, error: 'Database uninitialized' };
+              const res = await dbRef.current.submitVote(pollId, optionId);
+              if (res.success) {
+                refreshLocalState();
+              }
+              return res;
+            }}
+          />
+        )}
 
         {/* VIEW 3: ADMIN INSTRUMENT CONSOLE */}
         {activeScreen === 'ADMIN_CONSOLE' && profile.role === 'ADMIN' && (

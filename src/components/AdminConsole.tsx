@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Match, Profile, LedgerBlock, Prediction, Player, TeamStats } from '../types';
+import { Match, Profile, LedgerBlock, Prediction, Player, TeamStats, Poll, PollVote } from '../types';
 import { ClientDBEngine } from '../utils/dbEngine';
 import { 
   ShieldCheck, 
@@ -27,7 +27,9 @@ import {
   UserCheck, 
   TrendingUp, 
   Award,
-  Globe
+  Globe,
+  Plus,
+  Vote
 } from 'lucide-react';
 
 interface AdminConsoleProps {
@@ -47,7 +49,7 @@ export default function AdminConsole({
   onSimulateTamper,
   onResetDatabase
 }: AdminConsoleProps) {
-  const [activeTab, setActiveTab] = useState<'CONTROLS' | 'USERS' | 'LEDGER' | 'SYSTEM_SCHEMAS' | 'SQUADS'>('CONTROLS');
+  const [activeTab, setActiveTab] = useState<'CONTROLS' | 'USERS' | 'LEDGER' | 'SYSTEM_SCHEMAS' | 'SQUADS' | 'POLLS'>('CONTROLS');
   
   // Database instance reference
   const [db] = useState(() => new ClientDBEngine());
@@ -55,6 +57,13 @@ export default function AdminConsole({
   // Dynamic state loaded on mount/update
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [predictionsList, setPredictionsList] = useState<Prediction[]>([]);
+  const [polls, setPolls] = useState<Poll[]>([]);
+  const [votes, setVotes] = useState<PollVote[]>([]);
+
+  // Custom new poll creation form state
+  const [newPollQuestion, setNewPollQuestion] = useState('');
+  const [newPollOptions, setNewPollOptions] = useState<string[]>(['', '']);
+  const [newPollReward, setNewPollReward] = useState<number>(300);
   
   // Edit schedule state
   const [editingMatchId, setEditingMatchId] = useState<string | null>(null);
@@ -120,11 +129,68 @@ export default function AdminConsole({
   const reloadDbState = () => {
     setProfiles(db.getProfiles());
     setPredictionsList(db.getPredictions());
+    setPolls(db.getPolls());
+    setVotes(db.getVotes());
   };
 
   useEffect(() => {
     reloadDbState();
   }, []);
+
+  const handleAddNewOptionField = () => {
+    setNewPollOptions([...newPollOptions, '']);
+  };
+
+  const handleRemoveOptionField = (idx: number) => {
+    if (newPollOptions.length <= 2) return;
+    const cp = [...newPollOptions];
+    cp.splice(idx, 1);
+    setNewPollOptions(cp);
+  };
+
+  const handleUpdateOptionField = (idx: number, val: string) => {
+    const cp = [...newPollOptions];
+    cp[idx] = val;
+    setNewPollOptions(cp);
+  };
+
+  const handleCreatePollOnServer = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newPollQuestion.trim()) {
+      alert("Poll question is required.");
+      return;
+    }
+    const finalOptions = newPollOptions.filter(o => o.trim() !== '');
+    if (finalOptions.length < 2) {
+      alert("At least 2 valid options are required.");
+      return;
+    }
+
+    const res = await db.createPoll(newPollQuestion, finalOptions, newPollReward);
+    if (res.success) {
+      setSuccessMsg("Custom FWC 2026 Poll published successfully to the database!");
+      setNewPollQuestion('');
+      setNewPollOptions(['', '']);
+      setNewPollReward(300);
+      reloadDbState();
+      setTimeout(() => setSuccessMsg(''), 4000);
+    } else {
+      alert(res.error || "Failed to create poll.");
+    }
+  };
+
+  const handleResolvePollOnServer = async (pollId: string, optionId: string) => {
+    if (window.confirm("Are you sure you want to resolve this poll? Correct guesses will be immediately rewarded with points and standings will update.")) {
+      const res = await db.resolvePoll(pollId, optionId);
+      if (res.success) {
+        setSuccessMsg("Poll closed and resolved successfully! Calculated rewards added to winning standings.");
+        reloadDbState();
+        setTimeout(() => setSuccessMsg(''), 4000);
+      } else {
+        alert(res.error || "Failed to resolve poll.");
+      }
+    }
+  };
 
   const teamsList = React.useMemo(() => {
     const seen = new Set<string>();
@@ -486,6 +552,16 @@ export default function AdminConsole({
           }`}
         >
           <Users className="w-3.5 h-3.5 text-[#3cac3b]" /> Team & Squads Roster
+        </button>
+        <button
+          onClick={() => { setActiveTab('POLLS'); reloadDbState(); }}
+          className={`px-4 py-2.5 font-sans text-xs font-bold uppercase tracking-wider flex items-center gap-2 rounded-t-sm transition-all cursor-pointer ${
+            activeTab === 'POLLS'
+              ? 'bg-[#252727] text-white border-b-2 border-[#3cac3b]'
+              : 'text-[#d1d4d1]/40 hover:bg-[#252727]/50'
+          }`}
+        >
+          <Award className="w-3.5 h-3.5 text-[#3cac3b]" /> Fan Polls control
         </button>
       </nav>
 
@@ -1165,6 +1241,200 @@ export default function AdminConsole({
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* POLLS tab - admin manage and review poll results */}
+      {activeTab === 'POLLS' && (
+        <div className="space-y-6 animate-fadeIn">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            {/* Left Column: Create new Poll Form */}
+            <div className="bg-[#252727] border border-[#d1d4d1]/10 p-5 rounded-sm h-fit">
+              <h3 className="font-sans text-lg uppercase font-bold text-white tracking-wide mb-3 flex items-center gap-1.5 border-b border-[#d1d4d1]/10 pb-2">
+                <Plus className="w-5 h-5 text-[#3cac3b]" /> Launch Custom Fan Poll
+              </h3>
+              
+              <form onSubmit={handleCreatePollOnServer} className="space-y-4">
+                <div>
+                  <label className="block text-[10px] text-[#3cac3b] uppercase font-mono font-bold tracking-wider mb-1">
+                    Poll Question Query
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Which team will win group A?"
+                    value={newPollQuestion}
+                    onChange={(e) => setNewPollQuestion(e.target.value)}
+                    className="w-full bg-black/50 border border-[#d1d4d1]/10 py-2 px-3 text-xs text-white focus:border-[#3cac3b] outline-none rounded-sm placeholder-zinc-500 font-sans"
+                  />
+                </div>
+
+                <div>
+                  <div className="flex justify-between items-center mb-1">
+                    <label className="block text-[10px] text-[#3cac3b] uppercase font-mono font-bold tracking-wider">
+                      Poll Option Sub-Fields
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleAddNewOptionField}
+                      className="text-[10px] text-[#3cac3b] hover:underline uppercase font-mono font-bold cursor-pointer"
+                    >
+                      + Add Option
+                    </button>
+                  </div>
+                  
+                  <div className="space-y-2 max-h-[180px] overflow-y-auto pr-1">
+                    {newPollOptions.map((opt, idx) => (
+                      <div key={idx} className="flex gap-2 items-center">
+                        <span className="text-[10px] text-zinc-500 font-mono">#{idx+1}</span>
+                        <input
+                          type="text"
+                          required
+                          placeholder={`Option #${idx+1}`}
+                          value={opt}
+                          onChange={(e) => handleUpdateOptionField(idx, e.target.value)}
+                          className="flex-1 bg-black/40 border border-white/5 py-1 px-2.5 text-xs text-white focus:border-[#3cac3b] outline-none rounded-sm"
+                        />
+                        {newPollOptions.length > 2 && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveOptionField(idx)}
+                            className="text-zinc-500 hover:text-rose-400 text-xs font-mono font-bold px-1.5"
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] text-[#3cac3b] uppercase font-mono font-bold tracking-wider mb-1">
+                    Points Reward (On Correct Guess)
+                  </label>
+                  <input
+                    type="number"
+                    min={50}
+                    max={2000}
+                    required
+                    value={newPollReward}
+                    onChange={(e) => setNewPollReward(Number(e.target.value) || 300)}
+                    className="w-full bg-black/50 border border-[#d1d4d1]/10 py-2 px-3 text-xs text-yellow-400 font-mono font-bold focus:border-[#3cac3b] outline-none rounded-sm"
+                  />
+                  <span className="text-[9px] text-zinc-500 font-mono leading-none mt-1 block">
+                    Range: 50 to 2000 points.
+                  </span>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full bg-[#3cac3b] hover:bg-[#328e31] text-xs font-bold text-white uppercase py-2.5 rounded-sm tracking-wider transition-all duration-200 mt-2 cursor-pointer text-center"
+                >
+                  Publish Live Poll
+                </button>
+              </form>
+            </div>
+
+            {/* Right Column: Dynamic Poll Management & Vote Audit Sheets */}
+            <div className="lg:col-span-2 space-y-4">
+              <div className="bg-[#252727] border border-[#d1d4d1]/10 p-5 rounded-sm">
+                <h3 className="font-sans text-xl font-bold uppercase tracking-wider text-white mb-1">
+                  Fan Poll Control Room & Voter Sheets
+                </h3>
+                <p className="text-xs text-[#d1d4d1]/70 mb-5">
+                  View precise individual voter selections, review statistics, or resolve/close active polls to award points to winner profiles immediately.
+                </p>
+
+                <div className="space-y-6 max-h-[650px] overflow-y-auto pr-1 custom-scrollbar">
+                  {polls.length === 0 ? (
+                    <div className="text-center py-12 text-[#d1d4d1]/30 text-xs font-mono">
+                      No active pools found in database storage.
+                    </div>
+                  ) : (
+                    polls.map((poll) => {
+                      const pollVotes = votes.filter(v => v.poll_id === poll.id);
+                      const isVoted = pollVotes.length > 0;
+
+                      return (
+                        <div key={poll.id} className="bg-black/30 border border-[#d1d4d1]/10 p-4 rounded-sm flex flex-col justify-between">
+                          <header className="flex flex-wrap justify-between items-start gap-2 mb-3 pb-2 border-b border-white/5">
+                            <div>
+                              <h4 className="font-sans text-sm font-black text-white">{poll.question}</h4>
+                              <span className="text-[10px] font-mono text-zinc-500 block mt-0.5">POLL ID: {poll.id}</span>
+                            </div>
+                            <div className="flex gap-1.5 items-center">
+                              <span className="bg-[#3cac3b]/10 border border-[#3cac3b]/30 text-[#3cac3b] font-mono text-[9px] px-2 py-0.5 rounded-sm uppercase font-bold">
+                                Reward: +{poll.pointsReward} PTS
+                              </span>
+                              {poll.status === 'RESOLVED' ? (
+                                <span className="bg-zinc-700/80 border border-zinc-600 text-zinc-300 font-mono text-[9px] px-2 py-0.5 rounded-sm uppercase font-bold">
+                                  Resolved
+                                </span>
+                              ) : (
+                                <span className="bg-[#e61d25]/20 border border-[#e61d25]/40 text-rose-300 font-mono text-[9px] px-2 py-0.5 rounded-sm uppercase tracking-wide font-black animate-pulse">
+                                  Active Open
+                                </span>
+                              )}
+                            </div>
+                          </header>
+
+                          {/* Options grid with stats */}
+                          <div className="space-y-3.5 my-2">
+                            {poll.options.map((opt) => {
+                              const matchingVotes = pollVotes.filter(v => v.option_id === opt.id);
+                              const totalVotes = pollVotes.length;
+                              const pct = totalVotes > 0 ? Math.round((matchingVotes.length / totalVotes) * 100) : 0;
+                              const isWinner = poll.status === 'RESOLVED' && poll.correctOptionId === opt.id;
+
+                              // Collect voters info details
+                              const voterEntries = matchingVotes.map(v => {
+                                const found = profiles.find(p => p.id === v.user_id);
+                                return found ? `${found.fullName} (${found.role})` : 'Unknown User';
+                              }).join(', ');
+
+                              return (
+                                <div key={opt.id} className={`p-2 bg-black/40 border rounded-sm flex flex-col gap-1.5 ${
+                                  isWinner ? 'border-[#3cac3b] shadow-[0_0_10px_rgba(60,172,59,0.1)]' : 'border-white/5'
+                                }`}>
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-xs font-semibold text-white flex items-center gap-1.5">
+                                      {isWinner && <Check className="w-3.5 h-3.5 text-[#3cac3b]" />}
+                                      {opt.text}
+                                    </span>
+                                    <span className="font-mono text-[10px] text-zinc-400 font-bold shrink-0">
+                                      {matchingVotes.length} votes ({pct}%)
+                                    </span>
+                                  </div>
+
+                                  {/* Voters text log sheet */}
+                                  <div className="text-[9px] font-mono text-zinc-500 break-words mt-0.5">
+                                    Voters: {voterEntries || <span className="italic">None</span>}
+                                  </div>
+
+                                  {/* Resolve outcome controls */}
+                                  {poll.status === 'OPEN' && (
+                                    <button
+                                      onClick={() => handleResolvePollOnServer(poll.id, opt.id)}
+                                      className="self-end text-[9px] font-mono uppercase bg-[#3cac3b]/10 hover:bg-[#3cac3b]/20 text-[#3cac3b] px-2 py-0.5 rounded-sm border border-[#3cac3b]/20 mt-1 cursor-pointer transition-all shrink-0"
+                                    >
+                                      Mark as Correct Outcome
+                                    </button>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       )}

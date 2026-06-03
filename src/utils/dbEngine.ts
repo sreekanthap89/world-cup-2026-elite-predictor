@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Profile, Match, Prediction, LedgerBlock, Player, TeamStats } from '../types';
+import { Profile, Match, Prediction, LedgerBlock, Player, TeamStats, Poll, PollVote } from '../types';
 
 const STORAGE_PREFIX = 'FWC2026_PREDICTOR_';
 const PROFILE_KEY = `FWC2026_PREDICTOR_PROFILE`;
@@ -26,6 +26,8 @@ export class ClientDBEngine {
   private ledger: LedgerBlock[] = [];
   private squads: Record<string, Player[]> = {};
   private teamStats: Record<string, TeamStats> = {};
+  private polls: Poll[] = [];
+  private votes: PollVote[] = [];
   private isTampered: boolean = false;
 
   constructor() {
@@ -55,6 +57,8 @@ export class ClientDBEngine {
       this.ledger = data.ledger || [];
       this.squads = data.squads || {};
       this.teamStats = data.teamStats || {};
+      this.polls = data.polls || [];
+      this.votes = data.votes || [];
       this.isTampered = !!data.isTampered;
 
       // Update current profile reference if it exists in the updated profiles
@@ -347,6 +351,81 @@ export class ClientDBEngine {
       }
     } catch (e) {
       console.error('Failed tampering simulation', e);
+    }
+  }
+
+  public getPolls(): Poll[] {
+    return this.polls;
+  }
+
+  public getVotes(): PollVote[] {
+    return this.votes;
+  }
+
+  public async submitVote(pollId: string, optionId: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const res = await fetch('/api/db/submit-vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: this.profile.id,
+          pollId,
+          optionId
+        })
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        return { success: false, error: errData.error || 'Server rejected vote.' };
+      }
+
+      await this.syncFromServer();
+      return { success: true };
+    } catch (e) {
+      console.error('Error submitting vote', e);
+      return { success: false, error: 'Network communication failure.' };
+    }
+  }
+
+  public async createPoll(question: string, options: string[], pointsReward: number): Promise<{ success: boolean; error?: string }> {
+    try {
+      const res = await fetch('/api/db/create-poll', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question, options, pointsReward })
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        return { success: false, error: errData.error || 'Server rejected poll creation.' };
+      }
+
+      await this.syncFromServer();
+      return { success: true };
+    } catch (e) {
+      console.error('Error creating poll', e);
+      return { success: false, error: 'Network communication failure.' };
+    }
+  }
+
+  public async resolvePoll(pollId: string, correctOptionId: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const res = await fetch('/api/db/resolve-poll', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pollId, correctOptionId })
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        return { success: false, error: errData.error || 'Server rejected resolving poll.' };
+      }
+
+      await this.syncFromServer();
+      return { success: true };
+    } catch (e) {
+      console.error('Error resolving poll', e);
+      return { success: false, error: 'Network communication failure.' };
     }
   }
 }

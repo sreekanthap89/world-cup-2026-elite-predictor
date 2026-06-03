@@ -8,7 +8,7 @@ import path from "path";
 import fs from "fs";
 import crypto from "crypto";
 import { createServer as createViteServer } from "vite";
-import { Match, Prediction, Profile, LedgerBlock, Player, TeamStats } from "./src/types";
+import { Match, Prediction, Profile, LedgerBlock, Player, TeamStats, Poll, PollVote } from "./src/types";
 
 // Seed data from source ts file
 import { INITIAL_MATCHES, OFFICIAL_ROSTERS, OFFICIAL_TEAM_STATS } from "./src/data";
@@ -40,6 +40,58 @@ const SEEDED_PREDICTIONS: Prediction[] = [
   { id: 'pred-3', user_id: 'user-khan', match_id: 'm-left-r16-1', selection: 'COLOMBIA', team_a_pred_score: 1, team_b_pred_score: 2, created_at: '2026-06-01T18:15:00Z' }
 ];
 
+const SEEDED_POLLS: Poll[] = [
+  {
+    id: "poll-champion",
+    question: "Who will win the historic FIFA World Cup 2026 Grand Final?",
+    options: [
+      { id: "opt-usa", text: "United States (USMNT)" },
+      { id: "opt-mex", text: "Mexico (El Tri)" },
+      { id: "opt-can", text: "Canada" },
+      { id: "opt-braz", text: "Brazil (Seleção)" },
+      { id: "opt-arg", text: "Argentina (La Albiceleste)" },
+      { id: "opt-france", text: "France (Les Bleus)" }
+    ],
+    status: "OPEN",
+    pointsReward: 500
+  },
+  {
+    id: "poll-host",
+    question: "Which nation will deliver the most incredible host experience?",
+    options: [
+      { id: "opt-xp-usa", text: "United States (11 host cities, massive stadiums)" },
+      { id: "opt-xp-mex", text: "Mexico (Azteca magic, deep football heritage)" },
+      { id: "opt-xp-can", text: "Canada (Multicultural, soaring enthusiasm)" }
+    ],
+    status: "OPEN",
+    pointsReward: 250
+  },
+  {
+    id: "poll-underdog",
+    question: "Will there be a first-time champion in World Cup history in 2026?",
+    options: [
+      { id: "opt-under-yes", text: "Yes, a brand new champion rises" },
+      { id: "opt-under-no", text: "No, a traditional giant claims the cup" }
+    ],
+    status: "OPEN",
+    pointsReward: 300
+  }
+];
+
+const SEEDED_VOTES: PollVote[] = [
+  { id: "vote-1", user_id: "user-rossi", poll_id: "poll-champion", option_id: "opt-arg", created_at: "2026-06-01T12:00:00Z" },
+  { id: "vote-2", user_id: "user-jenkins", poll_id: "poll-champion", option_id: "opt-france", created_at: "2026-06-01T14:30:00Z" },
+  { id: "vote-3", user_id: "user-khan", poll_id: "poll-champion", option_id: "opt-braz", created_at: "2026-06-01T18:15:00Z" },
+  
+  { id: "vote-4", user_id: "user-rossi", poll_id: "poll-host", option_id: "opt-xp-mex", created_at: "2026-06-01T12:00:00Z" },
+  { id: "vote-5", user_id: "user-jenkins", poll_id: "poll-host", option_id: "opt-xp-usa", created_at: "2026-06-01T14:30:00Z" },
+  { id: "vote-6", user_id: "user-khan", poll_id: "poll-host", option_id: "opt-xp-mex", created_at: "2026-06-01T18:15:00Z" },
+
+  { id: "vote-7", user_id: "user-rossi", poll_id: "poll-underdog", option_id: "opt-under-no", created_at: "2026-06-01T12:00:00Z" },
+  { id: "vote-8", user_id: "user-jenkins", poll_id: "poll-underdog", option_id: "opt-under-yes", created_at: "2026-06-01T14:30:00Z" },
+  { id: "vote-9", user_id: "user-khan", poll_id: "poll-underdog", option_id: "opt-under-no", created_at: "2026-06-01T18:15:00Z" }
+];
+
 interface ServerDB {
   profiles: Profile[];
   matches: Match[];
@@ -48,6 +100,8 @@ interface ServerDB {
   isTampered: boolean;
   squads: Record<string, Player[]>;
   teamStats: Record<string, TeamStats>;
+  polls: Poll[];
+  votes: PollVote[];
 }
 
 let dbCache: ServerDB = {
@@ -57,7 +111,9 @@ let dbCache: ServerDB = {
   ledger: [],
   isTampered: false,
   squads: { ...OFFICIAL_ROSTERS },
-  teamStats: { ...OFFICIAL_TEAM_STATS }
+  teamStats: { ...OFFICIAL_TEAM_STATS },
+  polls: [...SEEDED_POLLS],
+  votes: [...SEEDED_VOTES]
 };
 
 // Cryptographic verification helper
@@ -111,7 +167,9 @@ function loadDatabase() {
         dbCache = {
           ...parsed,
           squads: parsed.squads || { ...OFFICIAL_ROSTERS },
-          teamStats: parsed.teamStats || { ...OFFICIAL_TEAM_STATS }
+          teamStats: parsed.teamStats || { ...OFFICIAL_TEAM_STATS },
+          polls: parsed.polls || [...SEEDED_POLLS],
+          votes: parsed.votes || [...SEEDED_VOTES]
         };
         // Verify ledger integrity
         const check = verifyServerLedger(dbCache.ledger);
@@ -131,7 +189,9 @@ function loadDatabase() {
     ledger: [],
     isTampered: false,
     squads: { ...OFFICIAL_ROSTERS },
-    teamStats: { ...OFFICIAL_TEAM_STATS }
+    teamStats: { ...OFFICIAL_TEAM_STATS },
+    polls: [...SEEDED_POLLS],
+    votes: [...SEEDED_VOTES]
   };
   
   // Seed Genesis block
@@ -152,7 +212,6 @@ function saveDatabaseToDisk() {
 function recomputeLeaderboardOnServer() {
   dbCache.profiles = dbCache.profiles.map(usr => {
     const usrPreds = dbCache.predictions.filter(p => p.user_id === usr.id);
-    if (usrPreds.length === 0) return usr;
 
     let correctCount = 0;
     let totalAssessed = 0;
@@ -179,9 +238,28 @@ function recomputeLeaderboardOnServer() {
 
     const accuracy = totalAssessed > 0 ? Math.round((correctCount / totalAssessed) * 100) : 75;
 
+    // Calculate user correct vote bonuses from resolved polls
+    let pollBonusPoints = 0;
+    const usrVotes = dbCache.votes.filter(v => v.user_id === usr.id);
+    usrVotes.forEach(vote => {
+      const p = dbCache.polls.find(poll => poll.id === vote.poll_id);
+      if (p && p.status === 'RESOLVED' && p.correctOptionId === vote.option_id) {
+        pollBonusPoints += p.pointsReward;
+      }
+    });
+
+    // Standard starting score for pre-seeded users
+    let seedBasePoints = 8000;
+    if (usr.id === 'user-rossi') seedBasePoints = 9800;
+    else if (usr.id === 'user-jenkins') seedBasePoints = 9500;
+    else if (usr.id === 'user-khan') seedBasePoints = 9100;
+    else if (usr.id === 'user-predictor-alpha' || usr.email === 'sreekanthap90@gmail.com') seedBasePoints = 8400;
+
+    let finalPoints = seedBasePoints + calculatedPoints + pollBonusPoints;
+
     return {
       ...usr,
-      points: usr.points > 2000 ? usr.points + (calculatedPoints ? 20 : 0) : 1000 + calculatedPoints,
+      points: finalPoints,
       accuracy: totalAssessed > 0 ? accuracy : usr.accuracy
     };
   }).sort((a, b) => b.points - a.points);
@@ -437,13 +515,103 @@ app.post("/api/db/reset", (req, res) => {
     ledger: [],
     isTampered: false,
     squads: { ...OFFICIAL_ROSTERS },
-    teamStats: { ...OFFICIAL_TEAM_STATS }
+    teamStats: { ...OFFICIAL_TEAM_STATS },
+    polls: [...SEEDED_POLLS],
+    votes: [...SEEDED_VOTES]
   };
 
   appendServerLedgerAction("GENESIS", "Database reset and re-verified successfully on administrative command.");
   saveDatabaseToDisk();
 
   res.json({ success: true, ...dbCache });
+});
+
+// 8.5 Poll Actions endpoints
+
+// Submit/Alter a fan vote in a poll
+app.post("/api/db/submit-vote", (req, res) => {
+  const { userId, pollId, optionId } = req.body;
+  if (!userId || !pollId || !optionId) {
+    return res.status(400).json({ error: "Invalid vote payload." });
+  }
+
+  const targetPoll = dbCache.polls.find(p => p.id === pollId);
+  if (!targetPoll) {
+    return res.status(404).json({ error: "Poll not found." });
+  }
+
+  if (targetPoll.status === 'RESOLVED') {
+    return res.status(403).json({ error: "This poll is resolved and closed for votes." });
+  }
+
+  // Remove previous vote for this user on this same poll
+  dbCache.votes = dbCache.votes.filter(v => !(v.user_id === userId && v.poll_id === pollId));
+
+  const newVote: PollVote = {
+    id: `vote-${crypto.randomUUID()}`,
+    user_id: userId,
+    poll_id: pollId,
+    option_id: optionId,
+    created_at: new Date().toISOString()
+  };
+
+  dbCache.votes.push(newVote);
+  appendServerLedgerAction("SUBMIT_VOTE", JSON.stringify({ user_id: userId, poll_id: pollId, option_id: optionId }));
+  saveDatabaseToDisk();
+
+  res.json({ success: true, votes: dbCache.votes });
+});
+
+// Admin command: create a new query poll
+app.post("/api/db/create-poll", (req, res) => {
+  const { question, options, pointsReward } = req.body;
+  if (!question || !Array.isArray(options) || options.length < 2) {
+    return res.status(400).json({ error: "Question and at least two options are required." });
+  }
+
+  const newPoll: Poll = {
+    id: `poll-${crypto.randomUUID()}`,
+    question,
+    options: options.map((opt: string, idx: number) => ({
+      id: `opt-${crypto.randomUUID().substring(0, 8)}`,
+      text: opt
+    })),
+    status: 'OPEN',
+    pointsReward: Number(pointsReward) || 300
+  };
+
+  dbCache.polls.push(newPoll);
+  appendServerLedgerAction("CREATE_POLL", JSON.stringify({ id: newPoll.id, question: newPoll.question }));
+  saveDatabaseToDisk();
+
+  res.json({ success: true, polls: dbCache.polls });
+});
+
+// Admin command: resolve a poll with correct option id and award/update rankings
+app.post("/api/db/resolve-poll", (req, res) => {
+  const { pollId, correctOptionId } = req.body;
+  if (!pollId || !correctOptionId) {
+    return res.status(400).json({ error: "Poll ID and correct Option ID are required." });
+  }
+
+  dbCache.polls = dbCache.polls.map(p => {
+    if (p.id === pollId) {
+      return {
+        ...p,
+        status: 'RESOLVED',
+        correctOptionId
+      };
+    }
+    return p;
+  });
+
+  // Re-rank and award poll rewards dynamically
+  recomputeLeaderboardOnServer();
+
+  appendServerLedgerAction("RESOLVE_POLL", JSON.stringify({ pollId, correctOptionId }));
+  saveDatabaseToDisk();
+
+  res.json({ success: true, polls: dbCache.polls, profiles: dbCache.profiles });
 });
 
 // 9. Tamper Simulation
