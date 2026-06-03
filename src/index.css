@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Bebas Neue", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* Host nations color tokens & prestige values */
+  --color-primary: #d1d4d1;
+  --color-on-primary: #1a1a1a;
+  --color-primary-container: #e61d25; /* Canada Torch Red */
+  --color-on-primary-container: #ffffff;
+  
+  --color-secondary: #3cac3b; /* Mexico Green */
+  --color-secondary-container: #008517;
+  
+  --color-tertiary: #2a398d; /* US Hermes Blue */
+  --color-tertiary-container: #303f93;
+  
+  --color-gold: #3cac3b; /* Switch highlight accent from generic gold to active green/theme */
+  --color-dark-gray: #474a4a;
+  --color-light-gray: #d1d4d1;
+}
+
+@layer base {
+  body {
+    background-color: #2a2c2c;
+    background-image: radial-gradient(#474A4A 0.5px, transparent 0.5px);
+    background-size: 24px 24px;
+    color: #d1d4d1;
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+  }
+}
+
+/* Scrollbar customization */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(209, 212, 209, 0.2);
+  border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(209, 212, 209, 0.4);
+}
+
+/* Shimmer animations on path highlights */
+@keyframes shimmer-stroke {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -100;
+  }
+}
+
+.shimmer-active {
+  stroke-dasharray: 10, 5;
+  animation: shimmer-stroke 4s infinite linear;
+}
+
+/* Momentum Chart Glow */
+.glow-gold {
+  filter: drop-shadow(0 0 4px rgba(60, 172, 59, 0.5));
+}
+.glow-primary {
+  filter: drop-shadow(0 0 6px rgba(209, 212, 209, 0.4));
+}
+
+

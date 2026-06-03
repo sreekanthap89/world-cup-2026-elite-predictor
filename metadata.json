@@ -1,0 +1,6 @@
+{
+  "name": "World Cup 2026 Elite Predictor",
+  "description": "A prestigious local-first prediction application for the 2026 FIFA World Cup featuring bracket visualizations, secure tamper-proof in-app database, and admin console.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

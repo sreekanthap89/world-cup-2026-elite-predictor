@@ -1,0 +1,3929 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { Match, Player, TeamStats } from './types';
+
+export const OFFICIAL_ROSTERS: Record<string, Player[]> = {
+  "USA": [
+    {
+      "jerseyNumber": 10,
+      "name": "C. Pulisic",
+      "position": "MID",
+      "club": "AC Milan",
+      "goals": 28,
+      "assists": 14
+    },
+    {
+      "jerseyNumber": 11,
+      "name": "B. Aaronson",
+      "position": "MID",
+      "club": "Leeds United",
+      "goals": 8,
+      "assists": 11
+    },
+    {
+      "jerseyNumber": 4,
+      "name": "T. Adams",
+      "position": "MID",
+      "club": "AFC Bournemouth",
+      "goals": 2,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 21,
+      "name": "T. Weah",
+      "position": "FWD",
+      "club": "Juventus",
+      "goals": 12,
+      "assists": 8
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "M. Turner",
+      "position": "GK",
+      "club": "Crystal Palace",
+      "goals": 0,
+      "assists": 0
+    },
+    {
+      "jerseyNumber": 8,
+      "name": "W. McKennie",
+      "position": "MID",
+      "club": "Juventus",
+      "goals": 11,
+      "assists": 15
+    }
+  ],
+  "COL": [
+    {
+      "jerseyNumber": 23,
+      "name": "Luis Díaz",
+      "position": "FWD",
+      "club": "Liverpool F.C.",
+      "goals": 14,
+      "assists": 9
+    },
+    {
+      "jerseyNumber": 10,
+      "name": "J. Rodríguez",
+      "position": "MID",
+      "club": "São Paulo",
+      "goals": 29,
+      "assists": 32
+    },
+    {
+      "jerseyNumber": 19,
+      "name": "R. Borré",
+      "position": "FWD",
+      "club": "Werder Bremen",
+      "goals": 11,
+      "assists": 4
+    }
+  ],
+  "FRA": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Mbappé",
+      "position": "FWD",
+      "club": "Real Madrid",
+      "goals": 47,
+      "assists": 22
+    },
+    {
+      "jerseyNumber": 7,
+      "name": "A. Griezmann",
+      "position": "FWD",
+      "club": "Atlético Madrid",
+      "goals": 44,
+      "assists": 31
+    },
+    {
+      "jerseyNumber": 8,
+      "name": "A. Tchouaméni",
+      "position": "MID",
+      "club": "Real Madrid",
+      "goals": 5,
+      "assists": 6
+    }
+  ],
+  "NED": [
+    {
+      "jerseyNumber": 4,
+      "name": "V. van Dijk",
+      "position": "DEF",
+      "club": "Liverpool F.C.",
+      "goals": 7,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 10,
+      "name": "M. Depay",
+      "position": "FWD",
+      "club": "Atlético Madrid",
+      "goals": 44,
+      "assists": 12
+    },
+    {
+      "jerseyNumber": 7,
+      "name": "X. Simons",
+      "position": "MID",
+      "club": "RB Leipzig",
+      "goals": 4,
+      "assists": 9
+    }
+  ],
+  "GER": [
+    {
+      "jerseyNumber": 10,
+      "name": "Jamal Musiala",
+      "position": "MID",
+      "club": "Bayern Munich",
+      "goals": 12,
+      "assists": 10
+    },
+    {
+      "jerseyNumber": 17,
+      "name": "Florian Wirtz",
+      "position": "MID",
+      "club": "Bayer Leverkusen",
+      "goals": 8,
+      "assists": 14
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "N. Füllkrug",
+      "position": "FWD",
+      "club": "Borussia Dortmund",
+      "goals": 14,
+      "assists": 3
+    }
+  ],
+  "BRA": [
+    {
+      "jerseyNumber": 10,
+      "name": "Vinícius Jr.",
+      "position": "FWD",
+      "club": "Real Madrid",
+      "goals": 16,
+      "assists": 15
+    },
+    {
+      "jerseyNumber": 11,
+      "name": "Raphinha",
+      "position": "FWD",
+      "club": "FC Barcelona",
+      "goals": 8,
+      "assists": 10
+    },
+    {
+      "jerseyNumber": 5,
+      "name": "Casemiro",
+      "position": "MID",
+      "club": "Manchester United",
+      "goals": 7,
+      "assists": 3
+    }
+  ],
+  "MEX": [
+    {
+      "jerseyNumber": 13,
+      "name": "G. Ochoa",
+      "position": "GK",
+      "club": "Club América",
+      "goals": 0,
+      "assists": 0
+    },
+    {
+      "jerseyNumber": 22,
+      "name": "H. Lozano",
+      "position": "FWD",
+      "club": "PSV Eindhoven",
+      "goals": 19,
+      "assists": 15
+    },
+    {
+      "jerseyNumber": 4,
+      "name": "E. Álvarez",
+      "position": "MID",
+      "club": "West Ham United",
+      "goals": 7,
+      "assists": 8
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "R. Jiménez",
+      "position": "FWD",
+      "club": "Fulham F.C.",
+      "goals": 33,
+      "assists": 10
+    },
+    {
+      "jerseyNumber": 15,
+      "name": "U. Antuna",
+      "position": "MID",
+      "club": "Cruz Azul",
+      "goals": 11,
+      "assists": 12
+    },
+    {
+      "jerseyNumber": 10,
+      "name": "S. Giménez",
+      "position": "FWD",
+      "club": "Feyenoord",
+      "goals": 22,
+      "assists": 6
+    }
+  ],
+  "ECU": [
+    {
+      "jerseyNumber": 13,
+      "name": "Enner Valencia",
+      "position": "FWD",
+      "club": "Internacional",
+      "goals": 41,
+      "assists": 12
+    },
+    {
+      "jerseyNumber": 10,
+      "name": "Moisés Caicedo",
+      "position": "MID",
+      "club": "Chelsea F.C.",
+      "goals": 3,
+      "assists": 10
+    }
+  ],
+  "ARG": [
+    {
+      "jerseyNumber": 10,
+      "name": "Lionel Messi",
+      "position": "FWD",
+      "club": "Inter Miami",
+      "goals": 106,
+      "assists": 54
+    },
+    {
+      "jerseyNumber": 22,
+      "name": "Lautaro Martínez",
+      "position": "FWD",
+      "club": "Inter Milan",
+      "goals": 24,
+      "assists": 8
+    },
+    {
+      "jerseyNumber": 7,
+      "name": "R. De Paul",
+      "position": "MID",
+      "club": "Atlético Madrid",
+      "goals": 2,
+      "assists": 11
+    }
+  ],
+  "CAN": [
+    {
+      "jerseyNumber": 19,
+      "name": "A. Davies",
+      "position": "MID",
+      "club": "Bayern Munich",
+      "goals": 15,
+      "assists": 21
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "J. David",
+      "position": "FWD",
+      "club": "Lille OSC",
+      "goals": 26,
+      "assists": 10
+    },
+    {
+      "jerseyNumber": 7,
+      "name": "C. Larin",
+      "position": "FWD",
+      "club": "RCD Mallorca",
+      "goals": 29,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 8,
+      "name": "S. Eustáquio",
+      "position": "MID",
+      "club": "F.C. Porto",
+      "goals": 6,
+      "assists": 12
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "M. Crépeau",
+      "position": "GK",
+      "club": "Portland Timbers",
+      "goals": 0,
+      "assists": 0
+    },
+    {
+      "jerseyNumber": 22,
+      "name": "R. Laryea",
+      "position": "DEF",
+      "club": "Toronto F.C.",
+      "goals": 3,
+      "assists": 8
+    }
+  ],
+  "ESP": [
+    {
+      "jerseyNumber": 10,
+      "name": "Dani Olmo",
+      "position": "MID",
+      "club": "FC Barcelona",
+      "goals": 11,
+      "assists": 9
+    },
+    {
+      "jerseyNumber": 17,
+      "name": "Lamine Yamal",
+      "position": "FWD",
+      "club": "FC Barcelona",
+      "goals": 3,
+      "assists": 7
+    },
+    {
+      "jerseyNumber": 16,
+      "name": "Rodri",
+      "position": "MID",
+      "club": "Manchester City",
+      "goals": 4,
+      "assists": 6
+    }
+  ],
+  "ITA": [
+    {
+      "jerseyNumber": 10,
+      "name": "F. Chiesa",
+      "position": "FWD",
+      "club": "Liverpool F.C.",
+      "goals": 7,
+      "assists": 8
+    },
+    {
+      "jerseyNumber": 23,
+      "name": "N. Barella",
+      "position": "MID",
+      "club": "Inter Milan",
+      "goals": 10,
+      "assists": 14
+    }
+  ],
+  "RSA": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. South Africa Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. South Africa Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. South Africa Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "KOR": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. South Korea Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. South Korea Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. South Korea Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "CZE": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Czech Republic Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Czech Republic Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Czech Republic Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "BIH": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Bosnia & Herzegovina Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Bosnia & Herzegovina Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Bosnia & Herzegovina Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "QAT": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Qatar Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Qatar Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Qatar Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "SUI": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Switzerland Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Switzerland Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Switzerland Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "MAR": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Morocco Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Morocco Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Morocco Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "HAI": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Haiti Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Haiti Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Haiti Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "SCO": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Scotland Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Scotland Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Scotland Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "PAR": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Paraguay Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Paraguay Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Paraguay Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "AUS": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Australia Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Australia Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Australia Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "TUR": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Turkey Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Turkey Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Turkey Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "CUW": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Curaçao Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Curaçao Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Curaçao Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "CIV": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Ivory Coast Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Ivory Coast Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Ivory Coast Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "JPN": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Japan Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Japan Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Japan Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "SWE": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Sweden Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Sweden Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Sweden Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "TUN": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Tunisia Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Tunisia Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Tunisia Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "BEL": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Belgium Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Belgium Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Belgium Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "EGY": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Egypt Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Egypt Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Egypt Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "IRN": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Iran Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Iran Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Iran Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "NZL": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. New Zealand Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. New Zealand Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. New Zealand Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "CPV": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Cape Verde Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Cape Verde Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Cape Verde Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "KSA": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Saudi Arabia Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Saudi Arabia Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Saudi Arabia Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "URU": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Uruguay Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Uruguay Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Uruguay Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "SEN": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Senegal Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Senegal Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Senegal Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "IRQ": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Iraq Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Iraq Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Iraq Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "NOR": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Norway Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Norway Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Norway Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "ALG": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Algeria Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Algeria Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Algeria Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "AUT": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Austria Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Austria Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Austria Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "JOR": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Jordan Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Jordan Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Jordan Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "POR": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Portugal Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Portugal Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Portugal Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "COD": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. DR Congo Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. DR Congo Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. DR Congo Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "UZB": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Uzbekistan Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Uzbekistan Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Uzbekistan Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "ENG": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. England Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. England Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. England Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "CRO": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Croatia Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Croatia Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Croatia Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "GHA": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Ghana Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Ghana Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Ghana Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "PAN": [
+    {
+      "jerseyNumber": 10,
+      "name": "K. Panama Star",
+      "position": "MID",
+      "club": "Global FC",
+      "goals": 8,
+      "assists": 5
+    },
+    {
+      "jerseyNumber": 9,
+      "name": "M. Panama Striker",
+      "position": "FWD",
+      "club": "National FC",
+      "goals": 15,
+      "assists": 2
+    },
+    {
+      "jerseyNumber": 1,
+      "name": "G. Panama Keeper",
+      "position": "GK",
+      "club": "Capital United",
+      "goals": 0,
+      "assists": 0
+    }
+  ],
+  "COLOMBIA": [
+    {
+      "jerseyNumber": 23,
+      "name": "Luis Díaz",
+      "position": "FWD",
+      "club": "Liverpool F.C.",
+      "goals": 14,
+      "assists": 9
+    },
+    {
+      "jerseyNumber": 10,
+      "name": "J. Rodríguez",
+      "position": "MID",
+      "club": "São Paulo",
+      "goals": 29,
+      "assists": 32
+    },
+    {
+      "jerseyNumber": 19,
+      "name": "R. Borré",
+      "position": "FWD",
+      "club": "Werder Bremen",
+      "goals": 11,
+      "assists": 4
+    }
+  ]
+};
+
+export const OFFICIAL_TEAM_STATS: Record<string, TeamStats> = {
+  "USA": {
+    "winProbability": 58,
+    "avgGoalsGame": 1.8,
+    "cleanSheets": "5/10",
+    "momentum": [
+      10,
+      25,
+      12,
+      35,
+      45
+    ]
+  },
+  "COL": {
+    "winProbability": 51,
+    "avgGoalsGame": 1.6,
+    "cleanSheets": "4/10",
+    "momentum": [
+      20,
+      15,
+      30,
+      22,
+      18
+    ]
+  },
+  "FRA": {
+    "winProbability": 75,
+    "avgGoalsGame": 2.5,
+    "cleanSheets": "6/10",
+    "momentum": [
+      45,
+      30,
+      40,
+      48,
+      50
+    ]
+  },
+  "NED": {
+    "winProbability": 60,
+    "avgGoalsGame": 1.9,
+    "cleanSheets": "4/10",
+    "momentum": [
+      15,
+      25,
+      22,
+      30,
+      35
+    ]
+  },
+  "GER": {
+    "winProbability": 68,
+    "avgGoalsGame": 2.1,
+    "cleanSheets": "5/10",
+    "momentum": [
+      25,
+      30,
+      35,
+      28,
+      40
+    ]
+  },
+  "BRA": {
+    "winProbability": 72,
+    "avgGoalsGame": 2.3,
+    "cleanSheets": "5/10",
+    "momentum": [
+      35,
+      20,
+      45,
+      15,
+      42
+    ]
+  },
+  "MEX": {
+    "winProbability": 62,
+    "avgGoalsGame": 2.4,
+    "cleanSheets": "4/10",
+    "momentum": [
+      5,
+      15,
+      25,
+      40,
+      45
+    ]
+  },
+  "ECU": {
+    "winProbability": 47,
+    "avgGoalsGame": 1.2,
+    "cleanSheets": "3/10",
+    "momentum": [
+      10,
+      12,
+      18,
+      30,
+      25
+    ]
+  },
+  "ARG": {
+    "winProbability": 80,
+    "avgGoalsGame": 2.6,
+    "cleanSheets": "7/10",
+    "momentum": [
+      48,
+      45,
+      49,
+      42,
+      55
+    ]
+  },
+  "CAN": {
+    "winProbability": 45,
+    "avgGoalsGame": 1.5,
+    "cleanSheets": "3/10",
+    "momentum": [
+      12,
+      8,
+      20,
+      25,
+      10
+    ]
+  },
+  "ESP": {
+    "winProbability": 78,
+    "avgGoalsGame": 2.3,
+    "cleanSheets": "6/10",
+    "momentum": [
+      42,
+      40,
+      38,
+      45,
+      49
+    ]
+  },
+  "ITA": {
+    "winProbability": 55,
+    "avgGoalsGame": 1.7,
+    "cleanSheets": "5/10",
+    "momentum": [
+      20,
+      22,
+      15,
+      28,
+      32
+    ]
+  },
+  "RSA": {
+    "winProbability": 68,
+    "avgGoalsGame": 1.9,
+    "cleanSheets": "1/10",
+    "momentum": [
+      40,
+      35,
+      43,
+      45,
+      23
+    ]
+  },
+  "KOR": {
+    "winProbability": 54,
+    "avgGoalsGame": 1.5,
+    "cleanSheets": "4/10",
+    "momentum": [
+      34,
+      15,
+      42,
+      47,
+      38
+    ]
+  },
+  "CZE": {
+    "winProbability": 56,
+    "avgGoalsGame": 1.9,
+    "cleanSheets": "1/10",
+    "momentum": [
+      48,
+      47,
+      25,
+      47,
+      24
+    ]
+  },
+  "BIH": {
+    "winProbability": 61,
+    "avgGoalsGame": 1.8,
+    "cleanSheets": "4/10",
+    "momentum": [
+      13,
+      40,
+      28,
+      16,
+      35
+    ]
+  },
+  "QAT": {
+    "winProbability": 69,
+    "avgGoalsGame": 1.2,
+    "cleanSheets": "4/10",
+    "momentum": [
+      22,
+      35,
+      42,
+      47,
+      13
+    ]
+  },
+  "SUI": {
+    "winProbability": 69,
+    "avgGoalsGame": 1.6,
+    "cleanSheets": "2/10",
+    "momentum": [
+      39,
+      41,
+      16,
+      30,
+      19
+    ]
+  },
+  "MAR": {
+    "winProbability": 41,
+    "avgGoalsGame": 1,
+    "cleanSheets": "1/10",
+    "momentum": [
+      31,
+      13,
+      35,
+      47,
+      19
+    ]
+  },
+  "HAI": {
+    "winProbability": 62,
+    "avgGoalsGame": 2,
+    "cleanSheets": "2/10",
+    "momentum": [
+      40,
+      40,
+      22,
+      44,
+      49
+    ]
+  },
+  "SCO": {
+    "winProbability": 37,
+    "avgGoalsGame": 1.7,
+    "cleanSheets": "3/10",
+    "momentum": [
+      12,
+      46,
+      45,
+      45,
+      12
+    ]
+  },
+  "PAR": {
+    "winProbability": 35,
+    "avgGoalsGame": 1.4,
+    "cleanSheets": "2/10",
+    "momentum": [
+      43,
+      40,
+      22,
+      32,
+      41
+    ]
+  },
+  "AUS": {
+    "winProbability": 65,
+    "avgGoalsGame": 1.6,
+    "cleanSheets": "1/10",
+    "momentum": [
+      42,
+      29,
+      49,
+      15,
+      10
+    ]
+  },
+  "TUR": {
+    "winProbability": 51,
+    "avgGoalsGame": 1.6,
+    "cleanSheets": "3/10",
+    "momentum": [
+      22,
+      47,
+      44,
+      48,
+      21
+    ]
+  },
+  "CUW": {
+    "winProbability": 38,
+    "avgGoalsGame": 1.4,
+    "cleanSheets": "3/10",
+    "momentum": [
+      47,
+      33,
+      12,
+      41,
+      29
+    ]
+  },
+  "CIV": {
+    "winProbability": 43,
+    "avgGoalsGame": 1.6,
+    "cleanSheets": "3/10",
+    "momentum": [
+      23,
+      49,
+      33,
+      40,
+      47
+    ]
+  },
+  "JPN": {
+    "winProbability": 50,
+    "avgGoalsGame": 1.4,
+    "cleanSheets": "4/10",
+    "momentum": [
+      30,
+      45,
+      27,
+      27,
+      43
+    ]
+  },
+  "SWE": {
+    "winProbability": 64,
+    "avgGoalsGame": 1.4,
+    "cleanSheets": "3/10",
+    "momentum": [
+      44,
+      43,
+      36,
+      28,
+      13
+    ]
+  },
+  "TUN": {
+    "winProbability": 60,
+    "avgGoalsGame": 2.2,
+    "cleanSheets": "3/10",
+    "momentum": [
+      30,
+      32,
+      48,
+      41,
+      28
+    ]
+  },
+  "BEL": {
+    "winProbability": 45,
+    "avgGoalsGame": 1.1,
+    "cleanSheets": "1/10",
+    "momentum": [
+      33,
+      35,
+      43,
+      11,
+      43
+    ]
+  },
+  "EGY": {
+    "winProbability": 38,
+    "avgGoalsGame": 2.2,
+    "cleanSheets": "3/10",
+    "momentum": [
+      26,
+      40,
+      19,
+      36,
+      21
+    ]
+  },
+  "IRN": {
+    "winProbability": 62,
+    "avgGoalsGame": 2.2,
+    "cleanSheets": "3/10",
+    "momentum": [
+      35,
+      22,
+      37,
+      28,
+      32
+    ]
+  },
+  "NZL": {
+    "winProbability": 37,
+    "avgGoalsGame": 1.7,
+    "cleanSheets": "3/10",
+    "momentum": [
+      15,
+      31,
+      34,
+      35,
+      32
+    ]
+  },
+  "CPV": {
+    "winProbability": 67,
+    "avgGoalsGame": 1.4,
+    "cleanSheets": "4/10",
+    "momentum": [
+      35,
+      29,
+      30,
+      19,
+      48
+    ]
+  },
+  "KSA": {
+    "winProbability": 63,
+    "avgGoalsGame": 1.6,
+    "cleanSheets": "4/10",
+    "momentum": [
+      15,
+      37,
+      41,
+      35,
+      12
+    ]
+  },
+  "URU": {
+    "winProbability": 37,
+    "avgGoalsGame": 1.8,
+    "cleanSheets": "4/10",
+    "momentum": [
+      16,
+      43,
+      30,
+      14,
+      31
+    ]
+  },
+  "SEN": {
+    "winProbability": 63,
+    "avgGoalsGame": 1.3,
+    "cleanSheets": "2/10",
+    "momentum": [
+      43,
+      33,
+      20,
+      30,
+      21
+    ]
+  },
+  "IRQ": {
+    "winProbability": 47,
+    "avgGoalsGame": 1.1,
+    "cleanSheets": "1/10",
+    "momentum": [
+      31,
+      28,
+      26,
+      29,
+      34
+    ]
+  },
+  "NOR": {
+    "winProbability": 54,
+    "avgGoalsGame": 1.9,
+    "cleanSheets": "3/10",
+    "momentum": [
+      35,
+      30,
+      32,
+      25,
+      19
+    ]
+  },
+  "ALG": {
+    "winProbability": 69,
+    "avgGoalsGame": 1.7,
+    "cleanSheets": "1/10",
+    "momentum": [
+      28,
+      10,
+      13,
+      13,
+      15
+    ]
+  },
+  "AUT": {
+    "winProbability": 57,
+    "avgGoalsGame": 1,
+    "cleanSheets": "1/10",
+    "momentum": [
+      13,
+      11,
+      47,
+      10,
+      46
+    ]
+  },
+  "JOR": {
+    "winProbability": 39,
+    "avgGoalsGame": 1.8,
+    "cleanSheets": "2/10",
+    "momentum": [
+      11,
+      19,
+      34,
+      21,
+      29
+    ]
+  },
+  "POR": {
+    "winProbability": 64,
+    "avgGoalsGame": 1.7,
+    "cleanSheets": "1/10",
+    "momentum": [
+      17,
+      37,
+      14,
+      13,
+      32
+    ]
+  },
+  "COD": {
+    "winProbability": 43,
+    "avgGoalsGame": 1.9,
+    "cleanSheets": "2/10",
+    "momentum": [
+      48,
+      26,
+      31,
+      42,
+      30
+    ]
+  },
+  "UZB": {
+    "winProbability": 39,
+    "avgGoalsGame": 2.1,
+    "cleanSheets": "4/10",
+    "momentum": [
+      23,
+      28,
+      33,
+      22,
+      44
+    ]
+  },
+  "ENG": {
+    "winProbability": 63,
+    "avgGoalsGame": 1.1,
+    "cleanSheets": "4/10",
+    "momentum": [
+      21,
+      46,
+      12,
+      14,
+      17
+    ]
+  },
+  "CRO": {
+    "winProbability": 59,
+    "avgGoalsGame": 1.9,
+    "cleanSheets": "4/10",
+    "momentum": [
+      18,
+      10,
+      36,
+      41,
+      33
+    ]
+  },
+  "GHA": {
+    "winProbability": 62,
+    "avgGoalsGame": 1.2,
+    "cleanSheets": "1/10",
+    "momentum": [
+      31,
+      34,
+      28,
+      36,
+      48
+    ]
+  },
+  "PAN": {
+    "winProbability": 49,
+    "avgGoalsGame": 2.1,
+    "cleanSheets": "1/10",
+    "momentum": [
+      47,
+      26,
+      21,
+      21,
+      18
+    ]
+  },
+  "COLOMBIA": {
+    "winProbability": 51,
+    "avgGoalsGame": 1.6,
+    "cleanSheets": "4/10",
+    "momentum": [
+      20,
+      15,
+      30,
+      22,
+      18
+    ]
+  }
+};
+
+export const INITIAL_MATCHES: Match[] = [
+  {
+    "id": "m-group-1",
+    "team_a_id": "MEX",
+    "team_a_name": "Mexico",
+    "team_a_flag": "MEX",
+    "team_b_id": "RSA",
+    "team_b_name": "South Africa",
+    "team_b_flag": "RSA",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-11T19:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Estadio Azteca, Mexico City",
+    "host_country": "MEX",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group A"
+  },
+  {
+    "id": "m-group-2",
+    "team_a_id": "KOR",
+    "team_a_name": "South Korea",
+    "team_a_flag": "KOR",
+    "team_b_id": "CZE",
+    "team_b_name": "Czech Republic",
+    "team_b_flag": "CZE",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-12T02:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Estadio Akron, Guadalajara (Zapopan)",
+    "host_country": "MEX",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group A"
+  },
+  {
+    "id": "m-group-3",
+    "team_a_id": "CZE",
+    "team_a_name": "Czech Republic",
+    "team_a_flag": "CZE",
+    "team_b_id": "RSA",
+    "team_b_name": "South Africa",
+    "team_b_flag": "RSA",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-18T16:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Mercedes-Benz Stadium, Atlanta",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group A"
+  },
+  {
+    "id": "m-group-4",
+    "team_a_id": "MEX",
+    "team_a_name": "Mexico",
+    "team_a_flag": "MEX",
+    "team_b_id": "KOR",
+    "team_b_name": "South Korea",
+    "team_b_flag": "KOR",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-19T01:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Estadio Akron, Guadalajara (Zapopan)",
+    "host_country": "MEX",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group A"
+  },
+  {
+    "id": "m-group-5",
+    "team_a_id": "CZE",
+    "team_a_name": "Czech Republic",
+    "team_a_flag": "CZE",
+    "team_b_id": "MEX",
+    "team_b_name": "Mexico",
+    "team_b_flag": "MEX",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-25T01:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Estadio Azteca, Mexico City",
+    "host_country": "MEX",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group A"
+  },
+  {
+    "id": "m-group-6",
+    "team_a_id": "RSA",
+    "team_a_name": "South Africa",
+    "team_a_flag": "RSA",
+    "team_b_id": "KOR",
+    "team_b_name": "South Korea",
+    "team_b_flag": "KOR",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-25T01:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Estadio BBVA, Monterrey (Guadalupe)",
+    "host_country": "MEX",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group A"
+  },
+  {
+    "id": "m-group-7",
+    "team_a_id": "CAN",
+    "team_a_name": "Canada",
+    "team_a_flag": "CAN",
+    "team_b_id": "BIH",
+    "team_b_name": "Bosnia & Herzegovina",
+    "team_b_flag": "BIH",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-12T19:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "BMO Field, Toronto",
+    "host_country": "CAN",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group B"
+  },
+  {
+    "id": "m-group-8",
+    "team_a_id": "QAT",
+    "team_a_name": "Qatar",
+    "team_a_flag": "QAT",
+    "team_b_id": "SUI",
+    "team_b_name": "Switzerland",
+    "team_b_flag": "SUI",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-13T19:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Levi's Stadium, San Francisco Bay Area (Santa Clara)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group B"
+  },
+  {
+    "id": "m-group-9",
+    "team_a_id": "SUI",
+    "team_a_name": "Switzerland",
+    "team_a_flag": "SUI",
+    "team_b_id": "BIH",
+    "team_b_name": "Bosnia & Herzegovina",
+    "team_b_flag": "BIH",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-18T19:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "SoFi Stadium, Los Angeles (Inglewood)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group B"
+  },
+  {
+    "id": "m-group-10",
+    "team_a_id": "CAN",
+    "team_a_name": "Canada",
+    "team_a_flag": "CAN",
+    "team_b_id": "QAT",
+    "team_b_name": "Qatar",
+    "team_b_flag": "QAT",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-18T22:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "BC Place, Vancouver",
+    "host_country": "CAN",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group B"
+  },
+  {
+    "id": "m-group-11",
+    "team_a_id": "SUI",
+    "team_a_name": "Switzerland",
+    "team_a_flag": "SUI",
+    "team_b_id": "CAN",
+    "team_b_name": "Canada",
+    "team_b_flag": "CAN",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-24T19:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "BC Place, Vancouver",
+    "host_country": "CAN",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group B"
+  },
+  {
+    "id": "m-group-12",
+    "team_a_id": "BIH",
+    "team_a_name": "Bosnia & Herzegovina",
+    "team_a_flag": "BIH",
+    "team_b_id": "QAT",
+    "team_b_name": "Qatar",
+    "team_b_flag": "QAT",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-24T19:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Lumen Field, Seattle",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group B"
+  },
+  {
+    "id": "m-group-13",
+    "team_a_id": "BRA",
+    "team_a_name": "Brazil",
+    "team_a_flag": "BRA",
+    "team_b_id": "MAR",
+    "team_b_name": "Morocco",
+    "team_b_flag": "MAR",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-13T22:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "MetLife Stadium, New York/New Jersey (East Rutherford)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group C"
+  },
+  {
+    "id": "m-group-14",
+    "team_a_id": "HAI",
+    "team_a_name": "Haiti",
+    "team_a_flag": "HAI",
+    "team_b_id": "SCO",
+    "team_b_name": "Scotland",
+    "team_b_flag": "SCO",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-14T01:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Gillette Stadium, Boston (Foxborough)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group C"
+  },
+  {
+    "id": "m-group-15",
+    "team_a_id": "SCO",
+    "team_a_name": "Scotland",
+    "team_a_flag": "SCO",
+    "team_b_id": "MAR",
+    "team_b_name": "Morocco",
+    "team_b_flag": "MAR",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-19T22:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Gillette Stadium, Boston (Foxborough)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group C"
+  },
+  {
+    "id": "m-group-16",
+    "team_a_id": "BRA",
+    "team_a_name": "Brazil",
+    "team_a_flag": "BRA",
+    "team_b_id": "HAI",
+    "team_b_name": "Haiti",
+    "team_b_flag": "HAI",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-20T00:30:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Lincoln Financial Field, Philadelphia",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group C"
+  },
+  {
+    "id": "m-group-17",
+    "team_a_id": "SCO",
+    "team_a_name": "Scotland",
+    "team_a_flag": "SCO",
+    "team_b_id": "BRA",
+    "team_b_name": "Brazil",
+    "team_b_flag": "BRA",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-24T22:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Hard Rock Stadium, Miami (Miami Gardens)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group C"
+  },
+  {
+    "id": "m-group-18",
+    "team_a_id": "MAR",
+    "team_a_name": "Morocco",
+    "team_a_flag": "MAR",
+    "team_b_id": "HAI",
+    "team_b_name": "Haiti",
+    "team_b_flag": "HAI",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-24T22:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Mercedes-Benz Stadium, Atlanta",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group C"
+  },
+  {
+    "id": "m-group-19",
+    "team_a_id": "USA",
+    "team_a_name": "USA",
+    "team_a_flag": "USA",
+    "team_b_id": "PAR",
+    "team_b_name": "Paraguay",
+    "team_b_flag": "PAR",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-13T01:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "SoFi Stadium, Los Angeles (Inglewood)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group D"
+  },
+  {
+    "id": "m-group-20",
+    "team_a_id": "AUS",
+    "team_a_name": "Australia",
+    "team_a_flag": "AUS",
+    "team_b_id": "TUR",
+    "team_b_name": "Turkey",
+    "team_b_flag": "TUR",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-14T04:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "BC Place, Vancouver",
+    "host_country": "CAN",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group D"
+  },
+  {
+    "id": "m-group-21",
+    "team_a_id": "USA",
+    "team_a_name": "USA",
+    "team_a_flag": "USA",
+    "team_b_id": "AUS",
+    "team_b_name": "Australia",
+    "team_b_flag": "AUS",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-19T19:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Lumen Field, Seattle",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group D"
+  },
+  {
+    "id": "m-group-22",
+    "team_a_id": "TUR",
+    "team_a_name": "Turkey",
+    "team_a_flag": "TUR",
+    "team_b_id": "PAR",
+    "team_b_name": "Paraguay",
+    "team_b_flag": "PAR",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-20T03:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Levi's Stadium, San Francisco Bay Area (Santa Clara)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group D"
+  },
+  {
+    "id": "m-group-23",
+    "team_a_id": "TUR",
+    "team_a_name": "Turkey",
+    "team_a_flag": "TUR",
+    "team_b_id": "USA",
+    "team_b_name": "USA",
+    "team_b_flag": "USA",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-26T02:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "SoFi Stadium, Los Angeles (Inglewood)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group D"
+  },
+  {
+    "id": "m-group-24",
+    "team_a_id": "PAR",
+    "team_a_name": "Paraguay",
+    "team_a_flag": "PAR",
+    "team_b_id": "AUS",
+    "team_b_name": "Australia",
+    "team_b_flag": "AUS",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-26T02:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Levi's Stadium, San Francisco Bay Area (Santa Clara)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group D"
+  },
+  {
+    "id": "m-group-25",
+    "team_a_id": "GER",
+    "team_a_name": "Germany",
+    "team_a_flag": "GER",
+    "team_b_id": "CUW",
+    "team_b_name": "Curaçao",
+    "team_b_flag": "CUW",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-14T17:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "NRG Stadium, Houston",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group E"
+  },
+  {
+    "id": "m-group-26",
+    "team_a_id": "CIV",
+    "team_a_name": "Ivory Coast",
+    "team_a_flag": "CIV",
+    "team_b_id": "ECU",
+    "team_b_name": "Ecuador",
+    "team_b_flag": "ECU",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-14T23:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Lincoln Financial Field, Philadelphia",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group E"
+  },
+  {
+    "id": "m-group-27",
+    "team_a_id": "GER",
+    "team_a_name": "Germany",
+    "team_a_flag": "GER",
+    "team_b_id": "CIV",
+    "team_b_name": "Ivory Coast",
+    "team_b_flag": "CIV",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-20T20:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "BMO Field, Toronto",
+    "host_country": "CAN",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group E"
+  },
+  {
+    "id": "m-group-28",
+    "team_a_id": "ECU",
+    "team_a_name": "Ecuador",
+    "team_a_flag": "ECU",
+    "team_b_id": "CUW",
+    "team_b_name": "Curaçao",
+    "team_b_flag": "CUW",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-21T00:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Arrowhead Stadium, Kansas City",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group E"
+  },
+  {
+    "id": "m-group-29",
+    "team_a_id": "CUW",
+    "team_a_name": "Curaçao",
+    "team_a_flag": "CUW",
+    "team_b_id": "CIV",
+    "team_b_name": "Ivory Coast",
+    "team_b_flag": "CIV",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-25T20:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Lincoln Financial Field, Philadelphia",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group E"
+  },
+  {
+    "id": "m-group-30",
+    "team_a_id": "ECU",
+    "team_a_name": "Ecuador",
+    "team_a_flag": "ECU",
+    "team_b_id": "GER",
+    "team_b_name": "Germany",
+    "team_b_flag": "GER",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-25T20:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "MetLife Stadium, New York/New Jersey (East Rutherford)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group E"
+  },
+  {
+    "id": "m-group-31",
+    "team_a_id": "NED",
+    "team_a_name": "Netherlands",
+    "team_a_flag": "NED",
+    "team_b_id": "JPN",
+    "team_b_name": "Japan",
+    "team_b_flag": "JPN",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-14T20:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "AT&T Stadium, Dallas (Arlington)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group F"
+  },
+  {
+    "id": "m-group-32",
+    "team_a_id": "SWE",
+    "team_a_name": "Sweden",
+    "team_a_flag": "SWE",
+    "team_b_id": "TUN",
+    "team_b_name": "Tunisia",
+    "team_b_flag": "TUN",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-15T02:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Estadio BBVA, Monterrey (Guadalupe)",
+    "host_country": "MEX",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group F"
+  },
+  {
+    "id": "m-group-33",
+    "team_a_id": "NED",
+    "team_a_name": "Netherlands",
+    "team_a_flag": "NED",
+    "team_b_id": "SWE",
+    "team_b_name": "Sweden",
+    "team_b_flag": "SWE",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-20T17:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "NRG Stadium, Houston",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group F"
+  },
+  {
+    "id": "m-group-34",
+    "team_a_id": "TUN",
+    "team_a_name": "Tunisia",
+    "team_a_flag": "TUN",
+    "team_b_id": "JPN",
+    "team_b_name": "Japan",
+    "team_b_flag": "JPN",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-21T04:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Estadio BBVA, Monterrey (Guadalupe)",
+    "host_country": "MEX",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group F"
+  },
+  {
+    "id": "m-group-35",
+    "team_a_id": "JPN",
+    "team_a_name": "Japan",
+    "team_a_flag": "JPN",
+    "team_b_id": "SWE",
+    "team_b_name": "Sweden",
+    "team_b_flag": "SWE",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-25T23:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "AT&T Stadium, Dallas (Arlington)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group F"
+  },
+  {
+    "id": "m-group-36",
+    "team_a_id": "TUN",
+    "team_a_name": "Tunisia",
+    "team_a_flag": "TUN",
+    "team_b_id": "NED",
+    "team_b_name": "Netherlands",
+    "team_b_flag": "NED",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-25T23:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Arrowhead Stadium, Kansas City",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group F"
+  },
+  {
+    "id": "m-group-37",
+    "team_a_id": "BEL",
+    "team_a_name": "Belgium",
+    "team_a_flag": "BEL",
+    "team_b_id": "EGY",
+    "team_b_name": "Egypt",
+    "team_b_flag": "EGY",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-15T19:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Lumen Field, Seattle",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group G"
+  },
+  {
+    "id": "m-group-38",
+    "team_a_id": "IRN",
+    "team_a_name": "Iran",
+    "team_a_flag": "IRN",
+    "team_b_id": "NZL",
+    "team_b_name": "New Zealand",
+    "team_b_flag": "NZL",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-16T01:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "SoFi Stadium, Los Angeles (Inglewood)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group G"
+  },
+  {
+    "id": "m-group-39",
+    "team_a_id": "BEL",
+    "team_a_name": "Belgium",
+    "team_a_flag": "BEL",
+    "team_b_id": "IRN",
+    "team_b_name": "Iran",
+    "team_b_flag": "IRN",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-21T19:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "SoFi Stadium, Los Angeles (Inglewood)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group G"
+  },
+  {
+    "id": "m-group-40",
+    "team_a_id": "NZL",
+    "team_a_name": "New Zealand",
+    "team_a_flag": "NZL",
+    "team_b_id": "EGY",
+    "team_b_name": "Egypt",
+    "team_b_flag": "EGY",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-22T01:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "BC Place, Vancouver",
+    "host_country": "CAN",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group G"
+  },
+  {
+    "id": "m-group-41",
+    "team_a_id": "EGY",
+    "team_a_name": "Egypt",
+    "team_a_flag": "EGY",
+    "team_b_id": "IRN",
+    "team_b_name": "Iran",
+    "team_b_flag": "IRN",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-27T03:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Lumen Field, Seattle",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group G"
+  },
+  {
+    "id": "m-group-42",
+    "team_a_id": "NZL",
+    "team_a_name": "New Zealand",
+    "team_a_flag": "NZL",
+    "team_b_id": "BEL",
+    "team_b_name": "Belgium",
+    "team_b_flag": "BEL",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-27T03:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "BC Place, Vancouver",
+    "host_country": "CAN",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group G"
+  },
+  {
+    "id": "m-group-43",
+    "team_a_id": "ESP",
+    "team_a_name": "Spain",
+    "team_a_flag": "ESP",
+    "team_b_id": "CPV",
+    "team_b_name": "Cape Verde",
+    "team_b_flag": "CPV",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-15T16:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Mercedes-Benz Stadium, Atlanta",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group H"
+  },
+  {
+    "id": "m-group-44",
+    "team_a_id": "KSA",
+    "team_a_name": "Saudi Arabia",
+    "team_a_flag": "KSA",
+    "team_b_id": "URU",
+    "team_b_name": "Uruguay",
+    "team_b_flag": "URU",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-15T22:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Hard Rock Stadium, Miami (Miami Gardens)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group H"
+  },
+  {
+    "id": "m-group-45",
+    "team_a_id": "ESP",
+    "team_a_name": "Spain",
+    "team_a_flag": "ESP",
+    "team_b_id": "KSA",
+    "team_b_name": "Saudi Arabia",
+    "team_b_flag": "KSA",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-21T16:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Mercedes-Benz Stadium, Atlanta",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group H"
+  },
+  {
+    "id": "m-group-46",
+    "team_a_id": "URU",
+    "team_a_name": "Uruguay",
+    "team_a_flag": "URU",
+    "team_b_id": "CPV",
+    "team_b_name": "Cape Verde",
+    "team_b_flag": "CPV",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-21T22:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Hard Rock Stadium, Miami (Miami Gardens)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group H"
+  },
+  {
+    "id": "m-group-47",
+    "team_a_id": "CPV",
+    "team_a_name": "Cape Verde",
+    "team_a_flag": "CPV",
+    "team_b_id": "KSA",
+    "team_b_name": "Saudi Arabia",
+    "team_b_flag": "KSA",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-27T00:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "NRG Stadium, Houston",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group H"
+  },
+  {
+    "id": "m-group-48",
+    "team_a_id": "URU",
+    "team_a_name": "Uruguay",
+    "team_a_flag": "URU",
+    "team_b_id": "ESP",
+    "team_b_name": "Spain",
+    "team_b_flag": "ESP",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-27T00:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Estadio Akron, Guadalajara (Zapopan)",
+    "host_country": "MEX",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group H"
+  },
+  {
+    "id": "m-group-49",
+    "team_a_id": "FRA",
+    "team_a_name": "France",
+    "team_a_flag": "FRA",
+    "team_b_id": "SEN",
+    "team_b_name": "Senegal",
+    "team_b_flag": "SEN",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-16T19:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "MetLife Stadium, New York/New Jersey (East Rutherford)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group I"
+  },
+  {
+    "id": "m-group-50",
+    "team_a_id": "IRQ",
+    "team_a_name": "Iraq",
+    "team_a_flag": "IRQ",
+    "team_b_id": "NOR",
+    "team_b_name": "Norway",
+    "team_b_flag": "NOR",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-16T22:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Gillette Stadium, Boston (Foxborough)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group I"
+  },
+  {
+    "id": "m-group-51",
+    "team_a_id": "FRA",
+    "team_a_name": "France",
+    "team_a_flag": "FRA",
+    "team_b_id": "IRQ",
+    "team_b_name": "Iraq",
+    "team_b_flag": "IRQ",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-22T21:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Lincoln Financial Field, Philadelphia",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group I"
+  },
+  {
+    "id": "m-group-52",
+    "team_a_id": "NOR",
+    "team_a_name": "Norway",
+    "team_a_flag": "NOR",
+    "team_b_id": "SEN",
+    "team_b_name": "Senegal",
+    "team_b_flag": "SEN",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-23T00:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "MetLife Stadium, New York/New Jersey (East Rutherford)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group I"
+  },
+  {
+    "id": "m-group-53",
+    "team_a_id": "NOR",
+    "team_a_name": "Norway",
+    "team_a_flag": "NOR",
+    "team_b_id": "FRA",
+    "team_b_name": "France",
+    "team_b_flag": "FRA",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-26T19:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Gillette Stadium, Boston (Foxborough)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group I"
+  },
+  {
+    "id": "m-group-54",
+    "team_a_id": "SEN",
+    "team_a_name": "Senegal",
+    "team_a_flag": "SEN",
+    "team_b_id": "IRQ",
+    "team_b_name": "Iraq",
+    "team_b_flag": "IRQ",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-26T19:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "BMO Field, Toronto",
+    "host_country": "CAN",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group I"
+  },
+  {
+    "id": "m-group-55",
+    "team_a_id": "ARG",
+    "team_a_name": "Argentina",
+    "team_a_flag": "ARG",
+    "team_b_id": "ALG",
+    "team_b_name": "Algeria",
+    "team_b_flag": "ALG",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-17T01:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Arrowhead Stadium, Kansas City",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group J"
+  },
+  {
+    "id": "m-group-56",
+    "team_a_id": "AUT",
+    "team_a_name": "Austria",
+    "team_a_flag": "AUT",
+    "team_b_id": "JOR",
+    "team_b_name": "Jordan",
+    "team_b_flag": "JOR",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-17T04:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Levi's Stadium, San Francisco Bay Area (Santa Clara)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group J"
+  },
+  {
+    "id": "m-group-57",
+    "team_a_id": "ARG",
+    "team_a_name": "Argentina",
+    "team_a_flag": "ARG",
+    "team_b_id": "AUT",
+    "team_b_name": "Austria",
+    "team_b_flag": "AUT",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-22T17:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "AT&T Stadium, Dallas (Arlington)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group J"
+  },
+  {
+    "id": "m-group-58",
+    "team_a_id": "JOR",
+    "team_a_name": "Jordan",
+    "team_a_flag": "JOR",
+    "team_b_id": "ALG",
+    "team_b_name": "Algeria",
+    "team_b_flag": "ALG",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-23T03:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Levi's Stadium, San Francisco Bay Area (Santa Clara)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group J"
+  },
+  {
+    "id": "m-group-59",
+    "team_a_id": "ALG",
+    "team_a_name": "Algeria",
+    "team_a_flag": "ALG",
+    "team_b_id": "AUT",
+    "team_b_name": "Austria",
+    "team_b_flag": "AUT",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-28T02:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Arrowhead Stadium, Kansas City",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group J"
+  },
+  {
+    "id": "m-group-60",
+    "team_a_id": "JOR",
+    "team_a_name": "Jordan",
+    "team_a_flag": "JOR",
+    "team_b_id": "ARG",
+    "team_b_name": "Argentina",
+    "team_b_flag": "ARG",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-28T02:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "AT&T Stadium, Dallas (Arlington)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group J"
+  },
+  {
+    "id": "m-group-61",
+    "team_a_id": "POR",
+    "team_a_name": "Portugal",
+    "team_a_flag": "POR",
+    "team_b_id": "COD",
+    "team_b_name": "DR Congo",
+    "team_b_flag": "COD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-17T17:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "NRG Stadium, Houston",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group K"
+  },
+  {
+    "id": "m-group-62",
+    "team_a_id": "UZB",
+    "team_a_name": "Uzbekistan",
+    "team_a_flag": "UZB",
+    "team_b_id": "COL",
+    "team_b_name": "Colombia",
+    "team_b_flag": "COL",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-18T02:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Estadio Azteca, Mexico City",
+    "host_country": "MEX",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group K"
+  },
+  {
+    "id": "m-group-63",
+    "team_a_id": "POR",
+    "team_a_name": "Portugal",
+    "team_a_flag": "POR",
+    "team_b_id": "UZB",
+    "team_b_name": "Uzbekistan",
+    "team_b_flag": "UZB",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-23T17:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "NRG Stadium, Houston",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group K"
+  },
+  {
+    "id": "m-group-64",
+    "team_a_id": "COL",
+    "team_a_name": "Colombia",
+    "team_a_flag": "COL",
+    "team_b_id": "COD",
+    "team_b_name": "DR Congo",
+    "team_b_flag": "COD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-24T02:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Estadio Akron, Guadalajara (Zapopan)",
+    "host_country": "MEX",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group K"
+  },
+  {
+    "id": "m-group-65",
+    "team_a_id": "COL",
+    "team_a_name": "Colombia",
+    "team_a_flag": "COL",
+    "team_b_id": "POR",
+    "team_b_name": "Portugal",
+    "team_b_flag": "POR",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-27T23:30:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Hard Rock Stadium, Miami (Miami Gardens)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group K"
+  },
+  {
+    "id": "m-group-66",
+    "team_a_id": "COD",
+    "team_a_name": "DR Congo",
+    "team_a_flag": "COD",
+    "team_b_id": "UZB",
+    "team_b_name": "Uzbekistan",
+    "team_b_flag": "UZB",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-27T23:30:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Mercedes-Benz Stadium, Atlanta",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group K"
+  },
+  {
+    "id": "m-group-67",
+    "team_a_id": "ENG",
+    "team_a_name": "England",
+    "team_a_flag": "ENG",
+    "team_b_id": "CRO",
+    "team_b_name": "Croatia",
+    "team_b_flag": "CRO",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-17T20:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "AT&T Stadium, Dallas (Arlington)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group L"
+  },
+  {
+    "id": "m-group-68",
+    "team_a_id": "GHA",
+    "team_a_name": "Ghana",
+    "team_a_flag": "GHA",
+    "team_b_id": "PAN",
+    "team_b_name": "Panama",
+    "team_b_flag": "PAN",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-17T23:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "BMO Field, Toronto",
+    "host_country": "CAN",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group L"
+  },
+  {
+    "id": "m-group-69",
+    "team_a_id": "ENG",
+    "team_a_name": "England",
+    "team_a_flag": "ENG",
+    "team_b_id": "GHA",
+    "team_b_name": "Ghana",
+    "team_b_flag": "GHA",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-23T20:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Gillette Stadium, Boston (Foxborough)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group L"
+  },
+  {
+    "id": "m-group-70",
+    "team_a_id": "PAN",
+    "team_a_name": "Panama",
+    "team_a_flag": "PAN",
+    "team_b_id": "CRO",
+    "team_b_name": "Croatia",
+    "team_b_flag": "CRO",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-23T23:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "BMO Field, Toronto",
+    "host_country": "CAN",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group L"
+  },
+  {
+    "id": "m-group-71",
+    "team_a_id": "PAN",
+    "team_a_name": "Panama",
+    "team_a_flag": "PAN",
+    "team_b_id": "ENG",
+    "team_b_name": "England",
+    "team_b_flag": "ENG",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-27T21:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "MetLife Stadium, New York/New Jersey (East Rutherford)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group L"
+  },
+  {
+    "id": "m-group-72",
+    "team_a_id": "CRO",
+    "team_a_name": "Croatia",
+    "team_a_flag": "CRO",
+    "team_b_id": "GHA",
+    "team_b_name": "Ghana",
+    "team_b_flag": "GHA",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-27T21:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Lincoln Financial Field, Philadelphia",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null,
+    "group": "Group L"
+  },
+  {
+    "id": "m-r32-1",
+    "team_a_id": "2A",
+    "team_a_name": "2A",
+    "team_a_flag": "TBD",
+    "team_b_id": "2B",
+    "team_b_name": "2B",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-28T19:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "R32",
+    "venue": "SoFi Stadium, Los Angeles (Inglewood)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null
+  },
+  {
+    "id": "m-r32-2",
+    "team_a_id": "1E",
+    "team_a_name": "1E",
+    "team_a_flag": "TBD",
+    "team_b_id": "3A/B/C/D/F",
+    "team_b_name": "3A/B/C/D/F",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-29T20:30:00.000Z",
+    "status": "SCHEDULED",
+    "round": "R32",
+    "venue": "Gillette Stadium, Boston (Foxborough)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null
+  },
+  {
+    "id": "m-r32-3",
+    "team_a_id": "1F",
+    "team_a_name": "1F",
+    "team_a_flag": "TBD",
+    "team_b_id": "2C",
+    "team_b_name": "2C",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-30T01:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "R32",
+    "venue": "Estadio BBVA, Monterrey (Guadalupe)",
+    "host_country": "MEX",
+    "bracket_wing": "LEFT",
+    "next_match_id": null
+  },
+  {
+    "id": "m-r32-4",
+    "team_a_id": "1C",
+    "team_a_name": "1C",
+    "team_a_flag": "TBD",
+    "team_b_id": "2F",
+    "team_b_name": "2F",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-29T17:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "R32",
+    "venue": "NRG Stadium, Houston",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null
+  },
+  {
+    "id": "m-r32-5",
+    "team_a_id": "1I",
+    "team_a_name": "1I",
+    "team_a_flag": "TBD",
+    "team_b_id": "3C/D/F/G/H",
+    "team_b_name": "3C/D/F/G/H",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-30T21:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "R32",
+    "venue": "MetLife Stadium, New York/New Jersey (East Rutherford)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null
+  },
+  {
+    "id": "m-r32-6",
+    "team_a_id": "2E",
+    "team_a_name": "2E",
+    "team_a_flag": "TBD",
+    "team_b_id": "2I",
+    "team_b_name": "2I",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-06-30T17:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "R32",
+    "venue": "AT&T Stadium, Dallas (Arlington)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null
+  },
+  {
+    "id": "m-r32-7",
+    "team_a_id": "1A",
+    "team_a_name": "1A",
+    "team_a_flag": "TBD",
+    "team_b_id": "3C/E/F/H/I",
+    "team_b_name": "3C/E/F/H/I",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-01T01:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "R32",
+    "venue": "Estadio Azteca, Mexico City",
+    "host_country": "MEX",
+    "bracket_wing": "LEFT",
+    "next_match_id": null
+  },
+  {
+    "id": "m-r32-8",
+    "team_a_id": "1L",
+    "team_a_name": "1L",
+    "team_a_flag": "TBD",
+    "team_b_id": "3E/H/I/J/K",
+    "team_b_name": "3E/H/I/J/K",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-01T16:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "R32",
+    "venue": "Mercedes-Benz Stadium, Atlanta",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null
+  },
+  {
+    "id": "m-r32-9",
+    "team_a_id": "1D",
+    "team_a_name": "1D",
+    "team_a_flag": "TBD",
+    "team_b_id": "3B/E/F/I/J",
+    "team_b_name": "3B/E/F/I/J",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-02T00:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "R32",
+    "venue": "Levi's Stadium, San Francisco Bay Area (Santa Clara)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null
+  },
+  {
+    "id": "m-r32-10",
+    "team_a_id": "1G",
+    "team_a_name": "1G",
+    "team_a_flag": "TBD",
+    "team_b_id": "3A/E/H/I/J",
+    "team_b_name": "3A/E/H/I/J",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-01T20:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "R32",
+    "venue": "Lumen Field, Seattle",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null
+  },
+  {
+    "id": "m-r32-11",
+    "team_a_id": "2K",
+    "team_a_name": "2K",
+    "team_a_flag": "TBD",
+    "team_b_id": "2L",
+    "team_b_name": "2L",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-02T23:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "R32",
+    "venue": "BMO Field, Toronto",
+    "host_country": "CAN",
+    "bracket_wing": "LEFT",
+    "next_match_id": null
+  },
+  {
+    "id": "m-r32-12",
+    "team_a_id": "1H",
+    "team_a_name": "1H",
+    "team_a_flag": "TBD",
+    "team_b_id": "2J",
+    "team_b_name": "2J",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-02T19:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "R32",
+    "venue": "SoFi Stadium, Los Angeles (Inglewood)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null
+  },
+  {
+    "id": "m-r32-13",
+    "team_a_id": "1B",
+    "team_a_name": "1B",
+    "team_a_flag": "TBD",
+    "team_b_id": "3E/F/G/I/J",
+    "team_b_name": "3E/F/G/I/J",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-03T03:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "R32",
+    "venue": "BC Place, Vancouver",
+    "host_country": "CAN",
+    "bracket_wing": "LEFT",
+    "next_match_id": null
+  },
+  {
+    "id": "m-r32-14",
+    "team_a_id": "1J",
+    "team_a_name": "1J",
+    "team_a_flag": "TBD",
+    "team_b_id": "2H",
+    "team_b_name": "2H",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-03T22:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "R32",
+    "venue": "Hard Rock Stadium, Miami (Miami Gardens)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null
+  },
+  {
+    "id": "m-r32-15",
+    "team_a_id": "1K",
+    "team_a_name": "1K",
+    "team_a_flag": "TBD",
+    "team_b_id": "3D/E/I/J/L",
+    "team_b_name": "3D/E/I/J/L",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-04T01:30:00.000Z",
+    "status": "SCHEDULED",
+    "round": "R32",
+    "venue": "Arrowhead Stadium, Kansas City",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null
+  },
+  {
+    "id": "m-r32-16",
+    "team_a_id": "2D",
+    "team_a_name": "2D",
+    "team_a_flag": "TBD",
+    "team_b_id": "2G",
+    "team_b_name": "2G",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-03T18:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "R32",
+    "venue": "AT&T Stadium, Dallas (Arlington)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null
+  },
+  {
+    "id": "m-l-r16-1",
+    "team_a_id": "W74",
+    "team_a_name": "W74",
+    "team_a_flag": "TBD",
+    "team_b_id": "W77",
+    "team_b_name": "W77",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-04T21:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "R16",
+    "venue": "Lincoln Financial Field, Philadelphia",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": "m-l-qf-1",
+    "next_match_slot": "A"
+  },
+  {
+    "id": "m-l-r16-2",
+    "team_a_id": "W73",
+    "team_a_name": "W73",
+    "team_a_flag": "TBD",
+    "team_b_id": "W75",
+    "team_b_name": "W75",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-04T17:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "R16",
+    "venue": "NRG Stadium, Houston",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": "m-l-qf-1",
+    "next_match_slot": "B"
+  },
+  {
+    "id": "m-r-r16-1",
+    "team_a_id": "W76",
+    "team_a_name": "W76",
+    "team_a_flag": "TBD",
+    "team_b_id": "W78",
+    "team_b_name": "W78",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-05T20:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "R16",
+    "venue": "MetLife Stadium, New York/New Jersey (East Rutherford)",
+    "host_country": "USA",
+    "bracket_wing": "RIGHT",
+    "next_match_id": "m-r-qf-1",
+    "next_match_slot": "A"
+  },
+  {
+    "id": "m-r-r16-2",
+    "team_a_id": "W79",
+    "team_a_name": "W79",
+    "team_a_flag": "TBD",
+    "team_b_id": "W80",
+    "team_b_name": "W80",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-06T00:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "R16",
+    "venue": "Estadio Azteca, Mexico City",
+    "host_country": "MEX",
+    "bracket_wing": "RIGHT",
+    "next_match_id": "m-r-qf-1",
+    "next_match_slot": "B"
+  },
+  {
+    "id": "m-l-r16-3",
+    "team_a_id": "W83",
+    "team_a_name": "W83",
+    "team_a_flag": "TBD",
+    "team_b_id": "W84",
+    "team_b_name": "W84",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-06T19:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "R16",
+    "venue": "AT&T Stadium, Dallas (Arlington)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": "m-l-qf-2",
+    "next_match_slot": "A"
+  },
+  {
+    "id": "m-l-r16-4",
+    "team_a_id": "W81",
+    "team_a_name": "W81",
+    "team_a_flag": "TBD",
+    "team_b_id": "W82",
+    "team_b_name": "W82",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-07T00:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "R16",
+    "venue": "Lumen Field, Seattle",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": "m-l-qf-2",
+    "next_match_slot": "B"
+  },
+  {
+    "id": "m-r-r16-3",
+    "team_a_id": "W86",
+    "team_a_name": "W86",
+    "team_a_flag": "TBD",
+    "team_b_id": "W88",
+    "team_b_name": "W88",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-07T16:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "R16",
+    "venue": "Mercedes-Benz Stadium, Atlanta",
+    "host_country": "USA",
+    "bracket_wing": "RIGHT",
+    "next_match_id": "m-r-qf-2",
+    "next_match_slot": "A"
+  },
+  {
+    "id": "m-r-r16-4",
+    "team_a_id": "W85",
+    "team_a_name": "W85",
+    "team_a_flag": "TBD",
+    "team_b_id": "W87",
+    "team_b_name": "W87",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-07T20:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "R16",
+    "venue": "BC Place, Vancouver",
+    "host_country": "CAN",
+    "bracket_wing": "RIGHT",
+    "next_match_id": "m-r-qf-2",
+    "next_match_slot": "B"
+  },
+  {
+    "id": "m-l-qf-1",
+    "team_a_id": "W89",
+    "team_a_name": "W89",
+    "team_a_flag": "TBD",
+    "team_b_id": "W90",
+    "team_b_name": "W90",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-09T20:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "QF",
+    "venue": "Gillette Stadium, Boston (Foxborough)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": "m-l-sf-1",
+    "next_match_slot": "A"
+  },
+  {
+    "id": "m-l-qf-2",
+    "team_a_id": "W93",
+    "team_a_name": "W93",
+    "team_a_flag": "TBD",
+    "team_b_id": "W94",
+    "team_b_name": "W94",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-10T19:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "QF",
+    "venue": "SoFi Stadium, Los Angeles (Inglewood)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": "m-l-sf-1",
+    "next_match_slot": "B"
+  },
+  {
+    "id": "m-r-qf-1",
+    "team_a_id": "W91",
+    "team_a_name": "W91",
+    "team_a_flag": "TBD",
+    "team_b_id": "W92",
+    "team_b_name": "W92",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-11T21:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "QF",
+    "venue": "Hard Rock Stadium, Miami (Miami Gardens)",
+    "host_country": "USA",
+    "bracket_wing": "RIGHT",
+    "next_match_id": "m-r-sf-1",
+    "next_match_slot": "A"
+  },
+  {
+    "id": "m-r-qf-2",
+    "team_a_id": "W95",
+    "team_a_name": "W95",
+    "team_a_flag": "TBD",
+    "team_b_id": "W96",
+    "team_b_name": "W96",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-12T01:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "QF",
+    "venue": "Arrowhead Stadium, Kansas City",
+    "host_country": "USA",
+    "bracket_wing": "RIGHT",
+    "next_match_id": "m-r-sf-1",
+    "next_match_slot": "B"
+  },
+  {
+    "id": "m-l-sf-1",
+    "team_a_id": "W97",
+    "team_a_name": "W97",
+    "team_a_flag": "TBD",
+    "team_b_id": "W98",
+    "team_b_name": "W98",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-14T19:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "SF",
+    "venue": "AT&T Stadium, Dallas (Arlington)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": "m-final-1",
+    "next_match_slot": "A"
+  },
+  {
+    "id": "m-r-sf-1",
+    "team_a_id": "W99",
+    "team_a_name": "W99",
+    "team_a_flag": "TBD",
+    "team_b_id": "W100",
+    "team_b_name": "W100",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-15T19:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "SF",
+    "venue": "Mercedes-Benz Stadium, Atlanta",
+    "host_country": "USA",
+    "bracket_wing": "RIGHT",
+    "next_match_id": "m-final-1",
+    "next_match_slot": "B"
+  },
+  {
+    "id": "m-extra-102",
+    "team_a_id": "L101",
+    "team_a_name": "L101",
+    "team_a_flag": "TBD",
+    "team_b_id": "L102",
+    "team_b_name": "L102",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-18T21:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "GROUP",
+    "venue": "Hard Rock Stadium, Miami (Miami Gardens)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null
+  },
+  {
+    "id": "m-final-1",
+    "team_a_id": "W101",
+    "team_a_name": "W101",
+    "team_a_flag": "TBD",
+    "team_b_id": "W102",
+    "team_b_name": "W102",
+    "team_b_flag": "TBD",
+    "team_a_score": null,
+    "team_b_score": null,
+    "start_time": "2026-07-19T19:00:00.000Z",
+    "status": "SCHEDULED",
+    "round": "FINAL",
+    "venue": "MetLife Stadium, New York/New Jersey (East Rutherford)",
+    "host_country": "USA",
+    "bracket_wing": "LEFT",
+    "next_match_id": null
+  }
+];
