@@ -31,9 +31,9 @@ export class ClientDBEngine {
   private isTampered: boolean = false;
 
   constructor() {
-    // Initial sync load if saved profile exists
+    // Initial sync load if saved profile exists in sessionStorage
     try {
-      const stored = localStorage.getItem(PROFILE_KEY);
+      const stored = sessionStorage.getItem(PROFILE_KEY);
       if (stored) {
         this.profile = JSON.parse(stored);
       }
@@ -66,7 +66,7 @@ export class ClientDBEngine {
       const refreshedProfile = this.profiles.find(p => p.id === currentId);
       if (refreshedProfile) {
         this.profile = refreshedProfile;
-        localStorage.setItem(PROFILE_KEY, JSON.stringify(refreshedProfile));
+        sessionStorage.setItem(PROFILE_KEY, JSON.stringify(refreshedProfile));
       }
     } catch (e) {
       console.error('Error synchronizing database state from server:', e);
@@ -126,7 +126,7 @@ export class ClientDBEngine {
       });
       if (res.ok) {
         this.profile = fullUpdated;
-        localStorage.setItem(PROFILE_KEY, JSON.stringify(fullUpdated));
+        sessionStorage.setItem(PROFILE_KEY, JSON.stringify(fullUpdated));
         await this.syncFromServer();
       }
     } catch (e) {
@@ -251,7 +251,7 @@ export class ClientDBEngine {
     );
     if (found) {
       this.profile = found;
-      localStorage.setItem(PROFILE_KEY, JSON.stringify(found));
+      sessionStorage.setItem(PROFILE_KEY, JSON.stringify(found));
       return found;
     }
     return null;
@@ -267,7 +267,7 @@ export class ClientDBEngine {
     );
     if (found) {
       this.profile = found;
-      localStorage.setItem(PROFILE_KEY, JSON.stringify(found));
+      sessionStorage.setItem(PROFILE_KEY, JSON.stringify(found));
       return found;
     }
     return null;

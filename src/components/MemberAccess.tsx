@@ -21,7 +21,13 @@ export default function MemberAccess({ onSuccess, initialEmail = 'sreekanthap90@
   const [accessMode, setAccessMode] = useState<'ANALYST_LOGIN' | 'ADMIN_GATE'>('ANALYST_LOGIN');
   
   // Input fields
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(() => {
+    try {
+      return localStorage.getItem('FWC2026_PREDICTOR_REMEMBRANCE_EMAIL') || initialEmail || '';
+    } catch {
+      return initialEmail || '';
+    }
+  });
   const [accessKey, setAccessKey] = useState('');
   const [fullName, setFullName] = useState('');
   const [employeeId, setEmployeeId] = useState('');
@@ -60,6 +66,16 @@ export default function MemberAccess({ onSuccess, initialEmail = 'sreekanthap90@
     }
 
     const normalizedEmail = email.trim().toLowerCase();
+
+    try {
+      if (rememberMe) {
+        localStorage.setItem('FWC2026_PREDICTOR_REMEMBRANCE_EMAIL', normalizedEmail);
+      } else {
+        localStorage.removeItem('FWC2026_PREDICTOR_REMEMBRANCE_EMAIL');
+      }
+    } catch (e) {
+      console.error('Failed writing remembrance token', e);
+    }
 
     if (accessMode === 'ANALYST_LOGIN') {
       // Find analyst user

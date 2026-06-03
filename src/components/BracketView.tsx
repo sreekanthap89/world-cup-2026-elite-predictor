@@ -180,6 +180,27 @@ export default function BracketView({
     setIsPanning(false);
   };
 
+  // Touch drag Pan handlers (for mobile/tablet screens)
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length !== 1) return;
+    setIsPanning(true);
+    const touch = e.touches[0];
+    setPanStart({ x: touch.clientX - panOffset.x, y: touch.clientY - panOffset.y });
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isPanning || e.touches.length !== 1) return;
+    const touch = e.touches[0];
+    setPanOffset({
+      x: touch.clientX - panStart.x,
+      y: touch.clientY - panStart.y
+    });
+  };
+
+  const handleTouchEnd = () => {
+    setIsPanning(false);
+  };
+
   const handleReset = () => {
     setZoomScale(0.65);
     setPanOffset({ x: 20, y: 20 });
@@ -466,17 +487,17 @@ export default function BracketView({
           <div className="absolute bottom-4 right-4 z-10 flex flex-col gap-1.5">
             <button
               onClick={() => setZoomScale(Math.min(zoomScale + 0.1, 1.5))}
-              className="w-9 h-9 bg-black/90 backdrop-blur-md border border-[#d1d4d1]/10 hover:bg-[#202222] text-white flex items-center justify-center font-bold rounded-sm cursor-pointer hover:border-emerald-400 transition-colors"
+              className="w-12 h-12 md:w-10 md:h-10 bg-black/90 backdrop-blur-md border border-[#d1d4d1]/10 hover:bg-[#202222] text-white flex items-center justify-center font-bold rounded-sm cursor-pointer hover:text-emerald-400 transition-colors"
               title="Zoom In"
             >
-              <ZoomIn className="w-4 h-4 text-emerald-400" />
+              <ZoomIn className="w-5 h-5 text-emerald-400" />
             </button>
             <button
               onClick={() => setZoomScale(Math.max(zoomScale - 0.1, 0.35))}
-              className="w-9 h-9 bg-black/90 backdrop-blur-md border border-[#d1d4d1]/10 hover:bg-[#202222] text-white flex items-center justify-center font-bold rounded-sm cursor-pointer hover:border-emerald-400 transition-colors"
+              className="w-12 h-12 md:w-10 md:h-10 bg-black/90 backdrop-blur-md border border-[#d1d4d1]/10 hover:bg-[#202222] text-white flex items-center justify-center font-bold rounded-sm cursor-pointer hover:text-emerald-400 transition-colors"
               title="Zoom Out"
             >
-              <ZoomOut className="w-4 h-4 text-emerald-400" />
+              <ZoomOut className="w-5 h-5 text-emerald-400" />
             </button>
           </div>
 
@@ -498,6 +519,9 @@ export default function BracketView({
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
             className={`w-full h-full cursor-grab ${isPanning ? 'cursor-grabbing' : ''}`}
           >
             {/* The Pitch zone: Green football turf with grass lines and white boundaries inside the ground */}

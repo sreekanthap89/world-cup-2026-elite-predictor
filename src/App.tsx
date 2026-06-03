@@ -57,12 +57,6 @@ export default function App() {
       setPolls(engine.getPolls());
       setVotes(engine.getVotes());
       setIsTampered(engine.checkIsTampered());
-
-      // Pre-load existing session details if remembered
-      const stored = localStorage.getItem('FWC2026_PREDICTOR_PROFILE');
-      if (stored) {
-        setProfile(JSON.parse(stored));
-      }
     };
     initDB();
   }, []);
@@ -83,7 +77,7 @@ export default function App() {
   // Auth logins handler
   const handleAuthSuccess = (newProfile: Profile) => {
     setProfile(newProfile);
-    localStorage.setItem('FWC2026_PREDICTOR_PROFILE', JSON.stringify(newProfile));
+    sessionStorage.setItem('FWC2026_PREDICTOR_PROFILE', JSON.stringify(newProfile));
     
     // Automatically configure role actions in ledger
     if (dbRef.current) {
@@ -95,6 +89,7 @@ export default function App() {
 
   const handleLogOut = () => {
     setProfile(null);
+    sessionStorage.removeItem('FWC2026_PREDICTOR_PROFILE');
     localStorage.removeItem('FWC2026_PREDICTOR_PROFILE');
   };
 

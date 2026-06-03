@@ -156,7 +156,12 @@ export default function BackgroundVideo({ opacity = 0.50, brightness = 0.40, isL
   };
 
   return (
-    <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0 select-none">
+    <div 
+      className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0 select-none bg-cover bg-center"
+      style={{
+        backgroundImage: `linear-gradient(to bottom, rgba(8, 9, 10, 0.45), rgba(8, 9, 10, 0.70)), url(${stadiumBg})`,
+      }}
+    >
       
       {/* LAYER 1: MULTILAYER COATING OVERLAYS FOR OPTIMAL UI CONTRAST */}
       {/* High-fidelity color match filters & glassmorphic depth effects */}
