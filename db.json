@@ -9,7 +9,7 @@
       "role": "ANALYST",
       "rank": 1,
       "accuracy": 98,
-      "points": 9840
+      "points": 9800
     },
     {
       "id": "user-jenkins",
@@ -20,7 +20,7 @@
       "role": "ANALYST",
       "rank": 2,
       "accuracy": 95,
-      "points": 9510
+      "points": 9500
     },
     {
       "id": "user-khan",
@@ -31,13 +31,13 @@
       "role": "ANALYST",
       "rank": 3,
       "accuracy": 91,
-      "points": 9120
+      "points": 9100
     },
     {
       "id": "user-predictor-alpha",
       "fullName": "Predictor_Alpha",
       "email": "sreekanthap90@gmail.com",
-      "employee_id": "FIFA-ADMIN-9044",
+      "employee_id": "FIFA-ADMIN-1074",
       "phone_number": "+1 (555) 012-2026",
       "role": "ADMIN",
       "rank": 4,
@@ -2114,6 +2114,14 @@
       "payload": "{\"email\":\"sreekanthap90@gmail.com\",\"fullName\":\"Predictor_Alpha\"}",
       "previous_hash": "74fbc5ca4e9176dfc1ca1c0c58af756d649765f295851451319c0dd3071c0d3c",
       "hash": "d537906b22c863de6190111cfdc326aaa4c27f7d2825ae7134e10affc137c587"
+    },
+    {
+      "index": 10,
+      "timestamp": "2026-06-03T20:19:09.307Z",
+      "action": "UPDATE_PROFILE",
+      "payload": "{\"email\":\"sreekanthap90@gmail.com\",\"fullName\":\"Predictor_Alpha\"}",
+      "previous_hash": "d537906b22c863de6190111cfdc326aaa4c27f7d2825ae7134e10affc137c587",
+      "hash": "9d6d40362922218e409a1f2584d0543315a100c50be5ec06153004b4e6e1c37d"
     }
   ],
   "isTampered": false,

@@ -60,7 +60,7 @@ export class ClientDBEngine {
       const res = await fetch('/api/db/get');
       if (!res.ok) throw new Error('API server fetch failure');
       const data = await res.json();
-      
+
       this.profiles = data.profiles || [];
       this.matches = data.matches || [];
       this.predictions = data.predictions || [];

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 // @ts-expect-error - image asset loaded by Vite
 import stadiumBg from '../assets/images/stadium_background_1780500343243.png';
 
@@ -119,12 +119,21 @@ export default function BackgroundVideo({ opacity = 0.50, brightness = 0.40, isL
         {/* YouTube iframe background for both login and landing pages */}
           <div className="absolute top-1/2 left-1/2 w-[125vw] h-[125vh] aspect-video -translate-x-1/2 -translate-y-1/2 scale-[1.7] min-w-[177.77vh] min-h-[56.25vw] flex items-center justify-center">
             <iframe
+              id="bg-video-iframe"
+              onLoad={() => {
+                const iframe = document.getElementById('bg-video-iframe') as HTMLIFrameElement;
+                try {
+                  iframe.contentWindow?.postMessage(JSON.stringify({ event: 'command', func: 'playVideo', args: [] }), '*');
+                } catch (e) {
+                  // ignore cross-origin errors
+                }
+              }}
               className="w-full h-full object-cover pointer-events-none"
               style={{
                 filter: `brightness(${brightness}) contrast(1.10) saturate(0.85)`,
                 border: 'none',
               }}
-              src={`https://www.youtube.com/embed/${isLogin ? loginYoutubeId : landingYoutubeId}?autoplay=1&mute=1&loop=1&playlist=${isLogin ? loginYoutubeId : landingYoutubeId}&controls=0&playsinline=1&rel=0&modestbranding=1`}
+              src={`https://www.youtube.com/embed/${isLogin ? loginYoutubeId : landingYoutubeId}?autoplay=1&mute=1&loop=1&playlist=${isLogin ? loginYoutubeId : landingYoutubeId}&controls=0&disablekb=1&playsinline=1&rel=0&modestbranding=1&showinfo=0&fs=0&iv_load_policy=3&autohide=1&enablejsapi=1&origin=${window.location.origin}`}
               title="FIFA World Cup 2026 Background"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               referrerPolicy="strict-origin-when-cross-origin"
