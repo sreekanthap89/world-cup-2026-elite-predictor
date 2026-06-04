@@ -4,9 +4,19 @@
  */
 
 import { Profile, Match, Prediction, LedgerBlock, Player, TeamStats, Poll, PollVote } from '../types';
+import { INITIAL_MATCHES, OFFICIAL_ROSTERS, OFFICIAL_TEAM_STATS } from '../data';
 
 const STORAGE_PREFIX = 'FWC2026_PREDICTOR_';
 const PROFILE_KEY = `FWC2026_PREDICTOR_PROFILE`;
+
+// Fallback profiles used when the backend API is unavailable (e.g. static hosting)
+const STATIC_SEEDED_PROFILES: Profile[] = [
+  { id: 'user-rossi', fullName: 'Marco Rossi', email: 'marco.rossi@fifa.com', employee_id: 'FIFA-2026-0041', phone_number: '+1 (555) 012-0041', role: 'ANALYST', rank: 1, accuracy: 98, points: 9840 },
+  { id: 'user-jenkins', fullName: 'Sarah Jenkins', email: 'sarah.j@predictor-net.org', employee_id: 'FIFA-2026-0129', phone_number: '+1 (555) 012-0129', role: 'ANALYST', rank: 2, accuracy: 95, points: 9510 },
+  { id: 'user-khan', fullName: 'Ahmed Khan', email: 'ahmed_k@al-jazeera.com', employee_id: 'FIFA-2026-0331', phone_number: '+1 (555) 012-0331', role: 'ANALYST', rank: 3, accuracy: 91, points: 9120 },
+  { id: 'user-predictor-alpha', fullName: 'Predictor_Alpha', email: 'sreekanthap90@gmail.com', employee_id: 'FIFA-2026-9901', phone_number: '+1 (555) 012-2026', role: 'ADMIN', rank: 4, accuracy: 94, points: 8420 }
+];
+
 
 export class ClientDBEngine {
   private profile: Profile = {
@@ -69,7 +79,22 @@ export class ClientDBEngine {
         sessionStorage.setItem(PROFILE_KEY, JSON.stringify(refreshedProfile));
       }
     } catch (e) {
-      console.error('Error synchronizing database state from server:', e);
+      // API not available (e.g. static hosting without a backend).
+      // Fall back to the bundled seed data so the bracket tree still renders.
+      console.warn('Backend API unavailable – falling back to static seed data:', e);
+      if (this.matches.length === 0) {
+        this.matches = [...INITIAL_MATCHES];
+      }
+      if (Object.keys(this.squads).length === 0) {
+        this.squads = { ...OFFICIAL_ROSTERS };
+      }
+      if (Object.keys(this.teamStats).length === 0) {
+        this.teamStats = { ...OFFICIAL_TEAM_STATS };
+      }
+      // Seed the current user into profiles if profiles list is empty
+      if (this.profiles.length === 0) {
+        this.profiles = [...STATIC_SEEDED_PROFILES];
+      }
     }
   }
 
