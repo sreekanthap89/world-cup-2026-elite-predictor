@@ -344,10 +344,11 @@ export default function MemberAccess({ onSuccess, initialEmail = 'sreekanthap90@
                 {recoveryStep === 'EMAIL_INPUT' ? (
                   <form onSubmit={handleRequestPasscode} className="space-y-3">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-mono uppercase text-[#d1d4d1]/60 block font-bold">Corporate Email Address</label>
+                      <label htmlFor="recoveryEmail" className="text-[10px] font-mono uppercase text-[#d1d4d1]/60 block font-bold">Corporate Email Address</label>
                       <div className="relative">
                         <Mail className="absolute left-3 top-3 w-3.5 h-3.5 text-white/40" />
                         <input
+                          id="recoveryEmail"
                           type="email"
                           value={recoveryEmail}
                           onChange={(e) => setRecoveryEmail(e.target.value)}
@@ -372,10 +373,11 @@ export default function MemberAccess({ onSuccess, initialEmail = 'sreekanthap90@
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-mono uppercase text-[#d1d4d1]/60 block font-bold">6-Digit Code</label>
+                      <label htmlFor="recoveryCode" className="text-[10px] font-mono uppercase text-[#d1d4d1]/60 block font-bold">6-Digit Code</label>
                       <div className="relative">
                         <Key className="absolute left-3 top-3 w-3.5 h-3.5 text-white/40" />
                         <input
+                          id="recoveryCode"
                           type="text"
                           maxLength={6}
                           value={recoveryCode}
@@ -388,10 +390,11 @@ export default function MemberAccess({ onSuccess, initialEmail = 'sreekanthap90@
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-mono uppercase text-[#d1d4d1]/60 block font-bold">New Security Password</label>
+                      <label htmlFor="newPassword" className="text-[10px] font-mono uppercase text-[#d1d4d1]/60 block font-bold">New Security Password</label>
                       <div className="relative">
                         <Lock className="absolute left-3 top-3 w-3.5 h-3.5 text-white/40" />
                         <input
+                          id="newPassword"
                           type="password"
                           value={newPassword}
                           onChange={(e) => setNewPassword(e.target.value)}
@@ -527,10 +530,11 @@ export default function MemberAccess({ onSuccess, initialEmail = 'sreekanthap90@
 
                 <form onSubmit={handleAccessSubmit} className="space-y-3.5">
                   <div className="space-y-1.5">
-                    <label className="text-[9.5px] font-mono text-[#d1d4d1]/60 uppercase tracking-widest font-bold block">Business Email</label>
+                    <label htmlFor="email" className="text-[9.5px] font-mono text-[#d1d4d1]/60 uppercase tracking-widest font-bold block">Business Email</label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-3 w-4 h-4 text-white/35" />
                       <input
+                        id="email"
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -544,10 +548,11 @@ export default function MemberAccess({ onSuccess, initialEmail = 'sreekanthap90@
                   {/* Show VIP code for admins */}
                   {accessMode === 'ADMIN_GATE' && (
                     <div className="space-y-2 bg-amber-500/5 p-3 border border-amber-500/20 rounded-md">
-                      <label className="text-[9px] font-mono text-amber-400 uppercase tracking-widest font-bold block">Security Passkey</label>
+                      <label htmlFor="adminAccessKey" className="text-[9px] font-mono text-amber-400 uppercase tracking-widest font-bold block">Security Passkey</label>
                       <div className="relative">
                         <Lock className="absolute left-3 top-3 w-4 h-4 text-amber-500/40" />
                         <input
+                          id="adminAccessKey"
                           type="password"
                           value={accessKey}
                           onChange={(e) => setAccessKey(e.target.value)}
@@ -562,10 +567,11 @@ export default function MemberAccess({ onSuccess, initialEmail = 'sreekanthap90@
                   {/* standard Analyst password key */}
                   {accessMode === 'ANALYST_LOGIN' && (
                     <div className="space-y-1.5">
-                      <label className="text-[9.5px] font-mono text-[#d1d4d1]/60 uppercase tracking-widest font-bold block">Security Password (Optional)</label>
+                      <label htmlFor="analystAccessKey" className="text-[9.5px] font-mono text-[#d1d4d1]/60 uppercase tracking-widest font-bold block">Security Password (Optional)</label>
                       <div className="relative">
                         <Lock className="absolute left-3 top-3 w-4 h-4 text-white/35" />
                         <input
+                          id="analystAccessKey"
                           type="password"
                           value={accessKey}
                           onChange={(e) => setAccessKey(e.target.value)}
@@ -588,8 +594,9 @@ export default function MemberAccess({ onSuccess, initialEmail = 'sreekanthap90@
                     >
                       Forgot passcode?
                     </button>
-                    <label className="flex items-center gap-1.5 cursor-pointer">
+                    <label htmlFor="rememberMe" className="flex items-center gap-1.5 cursor-pointer">
                       <input
+                        id="rememberMe"
                         type="checkbox"
                         checked={rememberMe}
                         onChange={(e) => setRememberMe(e.target.checked)}
