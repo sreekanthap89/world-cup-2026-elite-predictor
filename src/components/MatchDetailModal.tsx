@@ -256,10 +256,11 @@ export default function MatchDetailModal({
                   <div className="grid grid-cols-2 gap-4">
                     {/* Team A Predict input */}
                     <div className="space-y-1.5">
-                      <label className="text-xs text-[#d1d4d1]/70 block font-mono">
+                      <label htmlFor="teamAGoals" className="text-xs text-[#d1d4d1]/70 block font-mono">
                         {match.team_a_name} Goals
                       </label>
                       <input
+                        id="teamAGoals"
                         type="number"
                         min="0"
                         max="12"
@@ -272,10 +273,11 @@ export default function MatchDetailModal({
 
                     {/* Team B Predict input */}
                     <div className="space-y-1.5">
-                      <label className="text-xs text-[#d1d4d1]/70 block font-mono">
+                      <label htmlFor="teamBGoals" className="text-xs text-[#d1d4d1]/70 block font-mono">
                         {match.team_b_name} Goals
                       </label>
                       <input
+                        id="teamBGoals"
                         type="number"
                         min="0"
                         max="12"
@@ -289,10 +291,11 @@ export default function MatchDetailModal({
 
                   {/* Who will win dropdown selection */}
                   <div className="space-y-1.5">
-                    <label className="text-xs text-[#d1d4d1]/70 block font-mono">
+                    <label htmlFor="forecastWinner" className="text-xs text-[#d1d4d1]/70 block font-mono">
                       Forecast Winner Selection (Advancement Track)
                     </label>
                     <select
+                      id="forecastWinner"
                       value={selection}
                       disabled={isMatchStarted}
                       onChange={(e) => setSelection(e.target.value)}
