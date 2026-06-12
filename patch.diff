@@ -1,0 +1,275 @@
+--- src/components/BracketView.tsx
++++ src/components/BracketView.tsx
+@@ -5,7 +5,7 @@
+  */
+
+-import React, { useState, useRef } from 'react';
++import React, { useState, useRef, useMemo } from 'react';
+ import { Match, Prediction } from '../types';
+ import { RotateCcw, ZoomIn, ZoomOut, Trophy, HelpCircle, Lock } from 'lucide-react';
+ import GroupMatchesView from './GroupMatchesView';
+@@ -29,101 +29,106 @@
+   const viewportRef = useRef<HTMLDivElement>(null);
+
+   // Dynamic Group Standing Calculation
+-  const getGroupStandings = (groupName: string) => {
+-    const groupMatches = matches.filter(m => m.round === 'GROUP' && m.group === groupName);
+-    const standingsMap: Record<string, {
+-      team_id: string;
+-      team_name: string;
+-      flag: string;
+-      played: number;
+-      won: number;
+-      drawn: number;
+-      lost: number;
+-      gf: number;
+-      ga: number;
+-      gd: number;
+-      points: number;
+-    }> = {};
+-
+-    // First collect all participating teams in this group from list of matches
+-    groupMatches.forEach(m => {
+-      [
+-        { id: m.team_a_id, name: m.team_a_name, flag: m.team_a_flag },
+-        { id: m.team_b_id, name: m.team_b_name, flag: m.team_b_flag }
+-      ].forEach(t => {
+-        if (t.id && !standingsMap[t.id]) {
+-          standingsMap[t.id] = {
+-            team_id: t.id,
+-            team_name: t.name,
+-            flag: t.flag,
+-            played: 0,
+-            won: 0,
+-            drawn: 0,
+-            lost: 0,
+-            gf: 0,
+-            ga: 0,
+-            gd: 0,
+-            points: 0
+-          };
+-        }
+-      });
+-    });
+-
+-    // Now compute stats from completed scores
+-    groupMatches.forEach(m => {
+-      const isCompleted = m.status === 'COMPLETED' || (m.team_a_score !== null && m.team_b_score !== null);
+-      if (isCompleted) {
+-        const sa = m.team_a_score ?? 0;
+-        const sb = m.team_b_score ?? 0;
+-        const ta = standingsMap[m.team_a_id];
+-        const tb = standingsMap[m.team_b_id];
+-
+-        if (ta && tb) {
+-          ta.played += 1;
+-          tb.played += 1;
+-          ta.gf += sa;
+-          ta.ga += sb;
+-          tb.gf += sb;
+-          tb.ga += sa;
+-
+-          if (sa > sb) {
+-            ta.won += 1;
+-            ta.points += 3;
+-            tb.lost += 1;
+-          } else if (sa < sb) {
+-            tb.won += 1;
+-            tb.points += 3;
+-            ta.lost += 1;
+-          } else {
+-            ta.drawn += 1;
+-            tb.drawn += 1;
+-            ta.points += 1;
+-            tb.points += 1;
+-          }
+-        }
+-      } else {
+-        // Look up forecast predictions of users to show "Predicted Standings" when no actual results
+-        const pred = predictions.find(p => p.match_id === m.id);
+-        if (pred) {
+-          const sa = pred.team_a_pred_score;
+-          const sb = pred.team_b_pred_score;
+-          const ta = standingsMap[m.team_a_id];
+-          const tb = standingsMap[m.team_b_id];
+-
+-          if (ta && tb) {
+-            ta.played += 1;
+-            tb.played += 1;
+-            ta.gf += sa;
+-            ta.ga += sb;
+-            tb.gf += sb;
+-            tb.ga += sa;
+-
+-            if (pred.selection === m.team_a_id) {
+-              ta.won += 1;
+-              ta.points += 3;
+-              tb.lost += 1;
+-            } else if (pred.selection === m.team_b_id) {
+-              tb.won += 1;
+-              tb.points += 3;
+-              ta.lost += 1;
+-            } else {
+-              ta.drawn += 1;
+-              tb.drawn += 1;
+-              ta.points += 1;
+-              tb.points += 1;
+-            }
+-          }
+-        }
+-      }
+-    });
+-
+-    return Object.values(standingsMap).map(s => ({
+-      ...s,
+-      gd: s.gf - s.ga
+-    })).sort((x, y) => {
+-      if (y.points !== x.points) return y.points - x.points;
+-      if (y.gd !== x.gd) return y.gd - x.gd;
+-      return y.gf - x.gf;
+-    });
+-  };
++  const allGroupStandings = useMemo(() => {
++    const getGroupStandings = (groupName: string) => {
++      const groupMatches = matches.filter(m => m.round === 'GROUP' && m.group === groupName);
++      const standingsMap: Record<string, {
++        team_id: string;
++        team_name: string;
++        flag: string;
++        played: number;
++        won: number;
++        drawn: number;
++        lost: number;
++        gf: number;
++        ga: number;
++        gd: number;
++        points: number;
++      }> = {};
++
++      // First collect all participating teams in this group from list of matches
++      groupMatches.forEach(m => {
++        [
++          { id: m.team_a_id, name: m.team_a_name, flag: m.team_a_flag },
++          { id: m.team_b_id, name: m.team_b_name, flag: m.team_b_flag }
++        ].forEach(t => {
++          if (t.id && !standingsMap[t.id]) {
++            standingsMap[t.id] = {
++              team_id: t.id,
++              team_name: t.name,
++              flag: t.flag,
++              played: 0,
++              won: 0,
++              drawn: 0,
++              lost: 0,
++              gf: 0,
++              ga: 0,
++              gd: 0,
++              points: 0
++            };
++          }
++        });
++      });
++
++      // Now compute stats from completed scores
++      groupMatches.forEach(m => {
++        const isCompleted = m.status === 'COMPLETED' || (m.team_a_score !== null && m.team_b_score !== null);
++        if (isCompleted) {
++          const sa = m.team_a_score ?? 0;
++          const sb = m.team_b_score ?? 0;
++          const ta = standingsMap[m.team_a_id];
++          const tb = standingsMap[m.team_b_id];
++
++          if (ta && tb) {
++            ta.played += 1;
++            tb.played += 1;
++            ta.gf += sa;
++            ta.ga += sb;
++            tb.gf += sb;
++            tb.ga += sa;
++
++            if (sa > sb) {
++              ta.won += 1;
++              ta.points += 3;
++              tb.lost += 1;
++            } else if (sa < sb) {
++              tb.won += 1;
++              tb.points += 3;
++              ta.lost += 1;
++            } else {
++              ta.drawn += 1;
++              tb.drawn += 1;
++              ta.points += 1;
++              tb.points += 1;
++            }
++          }
++        } else {
++          // Look up forecast predictions of users to show "Predicted Standings" when no actual results
++          const pred = predictions.find(p => p.match_id === m.id);
++          if (pred) {
++            const sa = pred.team_a_pred_score;
++            const sb = pred.team_b_pred_score;
++            const ta = standingsMap[m.team_a_id];
++            const tb = standingsMap[m.team_b_id];
++
++            if (ta && tb) {
++              ta.played += 1;
++              tb.played += 1;
++              ta.gf += sa;
++              ta.ga += sb;
++              tb.gf += sb;
++              tb.ga += sa;
++
++              if (pred.selection === m.team_a_id) {
++                ta.won += 1;
++                ta.points += 3;
++                tb.lost += 1;
++              } else if (pred.selection === m.team_b_id) {
++                tb.won += 1;
++                tb.points += 3;
++                ta.lost += 1;
++              } else {
++                ta.drawn += 1;
++                tb.drawn += 1;
++                ta.points += 1;
++                tb.points += 1;
++              }
++            }
++          }
++        }
++      });
++
++      return Object.values(standingsMap).map(s => ({
++        ...s,
++        gd: s.gf - s.ga
++      })).sort((x, y) => {
++        if (y.points !== x.points) return y.points - x.points;
++        if (y.gd !== x.gd) return y.gd - x.gd;
++        return y.gf - x.gf;
++      });
++    };
++
++    const standings: Record<string, ReturnType<typeof getGroupStandings>> = {};
++    ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'].forEach(letter => {
++      standings[`Group ${letter}`] = getGroupStandings(`Group ${letter}`);
++    });
++    return standings;
++  }, [matches, predictions]);
+
+   // Mouse wheel Zoom tracker
+@@ -404,7 +409,7 @@
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+               {['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'].map(gChar => {
+                 const grpName = `Group ${gChar}`;
+-                const standings = getGroupStandings(grpName);
++                const standings = allGroupStandings[grpName];
+
+                 return (
+@@ -718,7 +723,7 @@
+
+                   // RENDER GROUP NODES DYNAMIC STANDINGS WIDGETS
+                   const renderGroupNode = (letter: string, leftPos: number, topPos: number) => {
+-                    const standings = getGroupStandings(`Group ${letter}`);
++                    const standings = allGroupStandings[`Group ${letter}`];
+                     return (
+                       <div
+                         key={`group-node-${letter}`}
